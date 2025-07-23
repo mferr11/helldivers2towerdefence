@@ -1,6 +1,6 @@
 name: Release App
 
-on: 
+on:
   workflow_run:
     workflows: ["Build"]
     types: [completed]

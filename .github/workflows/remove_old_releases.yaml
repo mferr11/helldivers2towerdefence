@@ -1,6 +1,6 @@
 name: Clean up releases # So we don't overuse our quota
 
-on: 
+on:
   workflow_run:
     workflows: ["Build and Release"]
     types: [completed]
@@ -16,4 +16,3 @@ jobs:
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
