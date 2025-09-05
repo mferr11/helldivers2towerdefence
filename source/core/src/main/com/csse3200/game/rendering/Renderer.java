@@ -29,6 +29,7 @@ public class Renderer implements Disposable {
 
   /**
    * Create a new renderer with default settings
+   *
    * @param camera camera to render to
    */
   public Renderer(CameraComponent camera) {
@@ -117,7 +118,9 @@ public class Renderer implements Disposable {
     logger.debug("Resizing to ({}x{})", width, height);
   }
 
-  /** @return The debug renderer attached to this renderer */
+  /**
+   * @return The debug renderer attached to this renderer
+   */
   public DebugRenderer getDebug() {
     return debugRenderer;
   }
