@@ -16,7 +16,14 @@ jobs:
         run: |
           cd $GRADLE_DIR
           chmod +x ./gradlew
-          ./gradlew formatCheck
+          OUTPUT=$(./gradlew formatCheck || true)
+
+          if echo "$OUTPUT" | grep -q "failed"; then
+            echo "::warning title=Formatting Issue::Code formatting needs fixing"
+          fi
+
+          echo "$OUTPUT"
+
         env:
           GRADLE_DIR: 'source'
         continue-on-error: true # change this to false if you want the pipeline to fail when the format check fails
