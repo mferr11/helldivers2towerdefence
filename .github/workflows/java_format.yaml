@@ -1,6 +1,6 @@
 name: Java Format
 
-on: [push, pull_request] # Will trigger whenever a push is made to the branch, regardless of which branch
+on: [push, pull_request] # Will trigger whenever a push or PR is made to a branch
 
 jobs:
   format_check_java:
@@ -16,14 +16,7 @@ jobs:
         run: |
           cd $GRADLE_DIR
           chmod +x ./gradlew
-          OUTPUT=$(./gradlew formatCheck || true)
-
-          if echo "$OUTPUT" | grep -q "failed"; then
-            echo "::warning title=Formatting Issue::Code formatting needs fixing"
-          fi
-
-          echo "$OUTPUT"
-
+          ./gradlew formatCheck
         env:
           GRADLE_DIR: 'source'
-        continue-on-error: true # change this to false if you want the pipeline to fail when the format check fails
+        continue-on-error: false # change this to true if you want the pipeline to not fail with formatting issues
