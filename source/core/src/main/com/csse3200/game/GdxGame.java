@@ -1,5 +1,7 @@
 package com.csse3200.game;
 
+import static com.badlogic.gdx.Gdx.app;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,8 +11,6 @@ import com.csse3200.game.screens.MainMenuScreen;
 import com.csse3200.game.screens.SettingsScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.badlogic.gdx.Gdx.app;
 
 /**
  * Entry point of the non-platform-specific game logic. Controls which screen is currently running.
@@ -26,14 +26,12 @@ public class GdxGame extends Game {
     loadSettings();
 
     // Sets background to light yellow
-    Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
+    Gdx.gl.glClearColor(248f / 255f, 249 / 255f, 178 / 255f, 1);
 
     setScreen(ScreenType.MAIN_MENU);
   }
 
-  /**
-   * Loads the game's settings.
-   */
+  /** Loads the game's settings. */
   private void loadSettings() {
     logger.debug("Loading game settings");
     UserSettings.Settings settings = UserSettings.get();
@@ -42,6 +40,7 @@ public class GdxGame extends Game {
 
   /**
    * Sets the game's screen to a new screen of the provided type.
+   *
    * @param screenType screen type
    */
   public void setScreen(ScreenType screenType) {
@@ -61,6 +60,7 @@ public class GdxGame extends Game {
 
   /**
    * Create a new screen of the provided type.
+   *
    * @param screenType screen type
    * @return new screen
    */
@@ -78,12 +78,12 @@ public class GdxGame extends Game {
   }
 
   public enum ScreenType {
-    MAIN_MENU, MAIN_GAME, SETTINGS
+    MAIN_MENU,
+    MAIN_GAME,
+    SETTINGS
   }
 
-  /**
-   * Exit the game.
-   */
+  /** Exit the game. */
   public void exit() {
     app.exit();
   }

@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
  * A simplified implementation of the Service Locator pattern:
  * https://martinfowler.com/articles/injection.html#UsingAServiceLocator
  *
- * <p>Allows global access to a few core game services.
- * Warning: global access is a trap and should be used <i>extremely</i> sparingly.
- * Read the wiki for details (https://github.com/UQcsse3200/game-engine/wiki/Service-Locator).
+ * <p>Allows global access to a few core game services. Warning: global access is a trap and should
+ * be used <i>extremely</i> sparingly. Read the wiki for details
+ * (https://github.com/UQcsse3200/game-engine/wiki/Service-Locator).
  */
 public class ServiceLocator {
   private static final Logger logger = LoggerFactory.getLogger(ServiceLocator.class);
@@ -23,7 +23,6 @@ public class ServiceLocator {
   private static GameTime timeSource;
   private static InputService inputService;
   private static ResourceService resourceService;
-
 
   public static EntityService getEntityService() {
     return entityService;

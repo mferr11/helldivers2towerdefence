@@ -9,17 +9,13 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 
-/**
- * A ui component for displaying player stats, e.g. health.
- */
+/** A ui component for displaying player stats, e.g. health. */
 public class PlayerStatsDisplay extends UIComponent {
   Table table;
   private Image heartImage;
   private Label healthLabel;
 
-  /**
-   * Creates reusable ui styles and adds actors to the stage.
-   */
+  /** Creates reusable ui styles and adds actors to the stage. */
   @Override
   public void create() {
     super.create();
@@ -30,6 +26,7 @@ public class PlayerStatsDisplay extends UIComponent {
 
   /**
    * Creates actors and positions them on the stage using a table.
+   *
    * @see Table for positioning options
    */
   private void addActors() {
@@ -40,7 +37,8 @@ public class PlayerStatsDisplay extends UIComponent {
 
     // Heart image
     float heartSideLength = 30f;
-    heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/heart.png", Texture.class));
+    heartImage =
+        new Image(ServiceLocator.getResourceService().getAsset("images/heart.png", Texture.class));
 
     // Health text
     int health = entity.getComponent(CombatStatsComponent.class).getHealth();
@@ -53,12 +51,13 @@ public class PlayerStatsDisplay extends UIComponent {
   }
 
   @Override
-  public void draw(SpriteBatch batch)  {
+  public void draw(SpriteBatch batch) {
     // draw is handled by the stage
   }
 
   /**
    * Updates the player's health on the ui.
+   *
    * @param health player health
    */
   public void updatePlayerHealthUI(int health) {
