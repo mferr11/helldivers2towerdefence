@@ -117,11 +117,14 @@ public class ForestGameArea extends GameArea {
   private void initialiseWaypoints() {
     waypointsGridPointList.add(new GridPoint2(0, 10));
     waypointsGridPointList.add(new GridPoint2(10, 10));
-    waypointsGridPointList.add(new GridPoint2(10, 0));
+    waypointsGridPointList.add(new GridPoint2(10, 5));
+    waypointsGridPointList.add(new GridPoint2(20, 5));
+    waypointsGridPointList.add(new GridPoint2(20, 10));
+    waypointsGridPointList.add(new GridPoint2(50, 10));
 
     for (GridPoint2 wp : waypointsGridPointList) {
       Entity waypointEntity = new Entity();
-      waypointEntity.setPosition(wp.x, wp.y);
+      waypointEntity.setPosition(wp.x/2, wp.y/2);
       waypointEntityList.add(waypointEntity);
     }
   }
@@ -148,13 +151,10 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnEnemy() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-
     for (int i = 0; i < 3; i++) {
-      GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
+      GridPoint2 spawnPos = new GridPoint2(0, 10);
       Entity enemy = EnemyFactory.createBaseEnemy(getWaypointEntityList());
-      spawnEntityAt(enemy, randomPos, true, true);
+      spawnEntityAt(enemy, spawnPos, true, true);
     }
   }
 

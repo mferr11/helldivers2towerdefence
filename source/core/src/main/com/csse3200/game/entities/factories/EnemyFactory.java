@@ -3,7 +3,8 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Gdx;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.enemy.clickable;
+import com.csse3200.game.components.enemy.WaypointTrackerComponent;
+import com.csse3200.game.components.enemy.Clickable;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.listeners.EventListener1;
@@ -20,40 +21,88 @@ import java.util.List;
  */
 public class EnemyFactory {
 
+    // Combat Stuff
     private static int DEFUALT_HEALTH = 50;
     private static int DEFAULT_DAMAGE = 10;
+
+    // Misc
     private static float DEFAULT_CLICK_RADIUS = 0.7f;
     private static String DEFAULT_TEXTURE_PATH = "images/ghost_1.png";
 
-    //public static Entity createBaseEnemy(List<Entity> waypoints, AnimationRenderComponent animations) {
+    /**
+     * Creates a base enemy entity with default components and behavior.
+     * The enemy will follow the provided waypoints in order, and can be clicked to take damage.
+     * When the enemy's health reaches zero, it will be destroyed.
+     * 
+     * @param waypoints List of waypoint entities for the enemy to follow in sequence
+     * @return A fully configured enemy entity with physics, combat stats, AI, and event listeners
+     */
     public static Entity createBaseEnemy(List<Entity> waypoints) {
+        WaypointTrackerComponent waypointTracker = new WaypointTrackerComponent(waypoints);
 
         AITaskComponent aiComponent = new AITaskComponent()
-            .addTask(new ChaseTask(waypoints.get(0), 1, 100f, 100f));
+            .addTask(new ChaseTask(
+                waypointTracker.getCurrentWaypointEntity(),
+                waypointTracker.getCurrentPriority(),
+                100f, 100f));
 
         Entity baseEnemy = new Entity()
-            .addComponent(new clickable(DEFAULT_CLICK_RADIUS))
+            .addComponent(new Clickable(DEFAULT_CLICK_RADIUS))
             .addComponent(new PhysicsComponent())
             .addComponent(new PhysicsMovementComponent())
             .addComponent(new HitboxComponent())
             .addComponent(new CombatStatsComponent(DEFUALT_HEALTH, DEFAULT_DAMAGE))
+            .addComponent(waypointTracker)
             .addComponent(aiComponent)
             // TextureRenderComponent is placeholder until I implement animations
             .addComponent(new TextureRenderComponent(DEFAULT_TEXTURE_PATH));
             // .addComponent(animations);
 
-    baseEnemy.getEvents().addListener("updateHealth", (EventListener1<Integer>) (health) -> takeDamage(baseEnemy, health));
-    return baseEnemy;
+        baseEnemy.getEvents().addListener("updateHealth", (EventListener1<Integer>) (health) -> takeDamage(baseEnemy, health));
+        baseEnemy.getEvents().addListener("finishedChaseTask", () -> updateWaypointTarget(baseEnemy));
+        return baseEnemy;
     }
 
-    private static void destroyEnemy(Entity enemy) {
+    /**
+     * Updates the enemy's target to the next waypoint in its path.
+     * Advances the waypoint tracker and assigns a new chase task to the enemy's AI.
+     * If the enemy has reached the end of the waypoint list, logs a message and does not add a new task.
+     * 
+     * @param baseEnemy The enemy entity to update
+     */
+    private static void updateWaypointTarget(Entity baseEnemy) {
+        WaypointTrackerComponent tracker = baseEnemy.getComponent(WaypointTrackerComponent.class);
+        
+        if (tracker.advanceWaypoint()) {
+            baseEnemy.getComponent(AITaskComponent.class)
+                .addTask(new ChaseTask(
+                    tracker.getCurrentWaypointEntity(), 
+                    tracker.getCurrentPriority(), 
+                    100, 100));
+        } else {
+            System.out.println("Reached end of waypoint list!");
+        }
+    }
 
-        // Final thing to call
+    /**
+     * Destroys an enemy entity and cleans up its resources.
+     * The disposal is posted to run on the next frame to avoid concurrent modification issues.
+     * 
+     * @param enemy The enemy entity to destroy
+     */
+    private static void destroyEnemy(Entity enemy) {
         Gdx.app.postRunnable(() -> {
             enemy.dispose();
         });
     }
 
+    /**
+     * Handles damage taken by an enemy and checks if it should be destroyed.
+     * Logs the new health value and destroys the enemy if health reaches zero or below.
+     * 
+     * @param enemy The enemy entity taking damage
+     * @param newHealth The enemy's health after taking damage
+     */
     private static void takeDamage(Entity enemy, int newHealth) {
         System.out.println("New Health: " + newHealth);
         if (newHealth <= 0) {

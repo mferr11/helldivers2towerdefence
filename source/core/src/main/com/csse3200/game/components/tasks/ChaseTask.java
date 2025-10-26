@@ -51,7 +51,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     movementTask.setTarget(target.getPosition());
     movementTask.update();
     if (movementTask.getStatus() != Status.ACTIVE) {
-      movementTask.start();
+      this.owner.getEntity().getEvents().trigger("finishedChaseTask");
     }
   }
 
