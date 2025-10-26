@@ -18,31 +18,28 @@ import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
+  private static java.util.List<Entity> waypointEntityList = new java.util.ArrayList<>();
+  private static java.util.List<GridPoint2> waypointsGridPointList = new java.util.ArrayList<>();
+
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
   private static final String[] forestTextures = {
-    "images/box_boy_leaf.png",
-    "images/tree.png",
-    "images/ghost_king.png",
     "images/ghost_1.png",
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
-    "images/hex_grass_1.png",
-    "images/hex_grass_2.png",
-    "images/hex_grass_3.png",
-    "images/iso_grass_1.png",
-    "images/iso_grass_2.png",
-    "images/iso_grass_3.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
   };
+
   private static final String[] forestSounds = {"sounds/Impact4.ogg"};
   private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
   private static final String[] forestMusic = {backgroundMusic};
@@ -69,9 +66,11 @@ public class ForestGameArea extends GameArea {
 
     displayUI();
 
+    initialiseWaypoints();
+
     spawnTerrain();
     //spawnTrees();
-    player = spawnPlayer();
+    //player = spawnPlayer();
     //spawnGhosts();
     //spawnGhostKing();
     spawnEnemy();
@@ -115,6 +114,22 @@ public class ForestGameArea extends GameArea {
         ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
   }
 
+  private void initialiseWaypoints() {
+    waypointsGridPointList.add(new GridPoint2(0, 10));
+    waypointsGridPointList.add(new GridPoint2(10, 10));
+    waypointsGridPointList.add(new GridPoint2(10, 0));
+
+    for (GridPoint2 wp : waypointsGridPointList) {
+      Entity waypointEntity = new Entity();
+      waypointEntity.setPosition(wp.x, wp.y);
+      waypointEntityList.add(waypointEntity);
+    }
+  }
+
+  public List<Entity> getWaypointEntityList() {
+    return waypointEntityList;
+  }
+
   private void spawnTrees() {
     GridPoint2 minPos = new GridPoint2(0, 0);
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
@@ -138,29 +153,9 @@ public class ForestGameArea extends GameArea {
 
     for (int i = 0; i < 3; i++) {
       GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-      Entity enemy = EnemyFactory.createBaseEnemy();
+      Entity enemy = EnemyFactory.createBaseEnemy(getWaypointEntityList());
       spawnEntityAt(enemy, randomPos, true, true);
     }
-  }
-
-  private void spawnGhosts() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-
-    for (int i = 0; i < NUM_GHOSTS; i++) {
-      GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-      Entity ghost = NPCFactory.createGhost(player);
-      spawnEntityAt(ghost, randomPos, true, true);
-    }
-  }
-
-  private void spawnGhostKing() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-
-    GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-    Entity ghostKing = NPCFactory.createGhostKing(player);
-    spawnEntityAt(ghostKing, randomPos, true, true);
   }
 
   private void playMusic() {

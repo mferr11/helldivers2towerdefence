@@ -33,8 +33,7 @@ public class clickable extends Component{
                 // Check if click is close to enemy
                 if (Math.abs(worldClickPos.x - (entityPos.x + clickRadius/2)) < clickRadius &&
                     Math.abs(worldClickPos.y - (entityPos.y + clickRadius)) < clickRadius) {
-                    entity.getComponent(CombatStatsComponent.class).addHealth(-10);    
-                    System.out.println("clicked enemy!")          ;
+                    entity.getComponent(CombatStatsComponent.class).addHealth(-10);
                 }
             }
         }
