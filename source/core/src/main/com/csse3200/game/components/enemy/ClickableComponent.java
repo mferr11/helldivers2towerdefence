@@ -9,10 +9,10 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.Renderer;
 
-public class Clickable extends Component{
+public class ClickableComponent extends Component{
     private float clickRadius;
 
-    public Clickable(float clickRadius) {
+    public ClickableComponent(float clickRadius) {
         this.clickRadius = clickRadius;
     }
     

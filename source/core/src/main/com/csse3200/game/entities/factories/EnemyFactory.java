@@ -4,7 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
-import com.csse3200.game.components.enemy.Clickable;
+import com.csse3200.game.components.enemy.ClickableComponent;
+import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.listeners.EventListener1;
@@ -47,7 +48,8 @@ public class EnemyFactory {
                 100f, 100f));
 
         Entity baseEnemy = new Entity()
-            .addComponent(new Clickable(DEFAULT_CLICK_RADIUS))
+            .addComponent(new ClickableComponent(DEFAULT_CLICK_RADIUS))
+            .addComponent(new HealthBarComponent())
             .addComponent(new PhysicsComponent())
             .addComponent(new PhysicsMovementComponent())
             .addComponent(new HitboxComponent())
