@@ -26,7 +26,7 @@ public class EnemyFactory {
     // Combat Stuff
     private static int DEFUALT_HEALTH = 50;
     private static int DEFAULT_DAMAGE = 10;
-    private static float DEFAULT_SPEED = 2f;
+    private static float DEFAULT_SPEED = 5f;
     private static int DEFAULT_ARMOUR_RATING = 0;
 
     // Misc

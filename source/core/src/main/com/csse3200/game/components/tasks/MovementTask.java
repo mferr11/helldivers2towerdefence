@@ -17,7 +17,8 @@ public class MovementTask extends DefaultTask {
 
   private final GameTime gameTime;
   private Vector2 target;
-  private float stopDistance = 0.01f;
+  // Adjust this if we're getting jittering when we reach the target
+  private float stopDistance = 0.1f;
   private long lastTimeMoved;
   private Vector2 lastPos;
   private PhysicsMovementComponent movementComponent;
