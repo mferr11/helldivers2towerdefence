@@ -7,21 +7,26 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.waveSystem.wave;
 import com.csse3200.game.entities.factories.EnemyFactory;
-import com.csse3200.game.entities.factories.NPCFactory;
 import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
+import com.badlogic.gdx.utils.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
+  private List<wave> waves;
+  private Timer.Task spawnTask;
+
   private static java.util.List<Entity> waypointEntityList = new java.util.ArrayList<>();
   private static java.util.List<GridPoint2> waypointsGridPointList = new java.util.ArrayList<>();
 
@@ -62,11 +67,13 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    initialiseWaypoints();
+    initialiseWaves();
+    startWaveSpawning();
+
     loadAssets();
 
     displayUI();
-
-    initialiseWaypoints();
 
     spawnTerrain();
     //spawnTrees();
@@ -76,6 +83,36 @@ public class ForestGameArea extends GameArea {
     spawnEnemy();
 
     //playMusic();
+  }
+
+  private void initialiseWaves() {
+    waves = new ArrayList<>();
+
+    waves.add(new wave(0, false, 5, 1f, waypointEntityList));
+  }
+
+  private void startWaveSpawning() {
+    wave currentWave = waves.get(0);
+    final int[] enemiesSpawned = {0};
+      
+    spawnTask = Timer.schedule(new Timer.Task() {
+        @Override
+        public void run() {
+          // Safety check before doing anything
+          if (ServiceLocator.getPhysicsService() == null) {
+              this.cancel();
+              return;
+          }
+          if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
+              spawnEnemy();
+              enemiesSpawned[0]++;
+          } else {
+              // Stop the timer when all enemies are spawned
+              this.cancel();
+              spawnTask = null;
+          }
+        }
+    }, 0, currentWave.getSpawnRate());  // Start immediately (0 delay), repeat every spawnRate seconds
   }
 
   private void displayUI() {
@@ -115,6 +152,9 @@ public class ForestGameArea extends GameArea {
   }
 
   private void initialiseWaypoints() {
+    waypointsGridPointList.clear();
+    waypointEntityList.clear();
+
     waypointsGridPointList.add(new GridPoint2(0, 10));
     waypointsGridPointList.add(new GridPoint2(10, 10));
     waypointsGridPointList.add(new GridPoint2(10, 5));
@@ -151,11 +191,9 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnEnemy() {
-    for (int i = 0; i < 3; i++) {
-      GridPoint2 spawnPos = new GridPoint2(0, 10);
-      Entity enemy = EnemyFactory.createBaseEnemy(getWaypointEntityList());
-      spawnEntityAt(enemy, spawnPos, true, true);
-    }
+    GridPoint2 spawnPos = new GridPoint2(0, 10);
+    Entity enemy = EnemyFactory.createBaseEnemy(getWaypointEntityList());
+    spawnEntityAt(enemy, spawnPos, true, true);
   }
 
   private void playMusic() {
@@ -191,6 +229,12 @@ public class ForestGameArea extends GameArea {
   @Override
   public void dispose() {
     super.dispose();
+
+    if (spawnTask != null) {
+        spawnTask.cancel();
+        spawnTask = null;
+    }
+
     ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
     this.unloadAssets();
   }

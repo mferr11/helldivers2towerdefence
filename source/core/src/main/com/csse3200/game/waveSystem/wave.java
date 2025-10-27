@@ -42,4 +42,11 @@ public class wave {
     public int getWaveNumber() { 
         return waveNumber;
     }
+
+    /**
+     * Gets the wave spawn rate.
+     */
+    public float getSpawnRate() { 
+        return spawnRate;
+    }
 }

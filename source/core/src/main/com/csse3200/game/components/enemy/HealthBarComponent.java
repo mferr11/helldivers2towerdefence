@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class HealthBarComponent extends RenderComponent {
     private static final Logger logger = LoggerFactory.getLogger(HealthBarComponent.class);
     
-    private static final float DEFAULT_WIDTH = 1.5f;
+    private static final float DEFAULT_WIDTH = 0.75f;
     private static final float DEFAULT_HEIGHT = 0.15f;
     private static final float DEFAULT_OFFSET_Y = 0.8f;
     
