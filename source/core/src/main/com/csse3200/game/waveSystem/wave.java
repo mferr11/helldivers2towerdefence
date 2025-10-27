@@ -7,14 +7,14 @@ import java.util.List;
 /**
  * Represents a wave of enemies with configurable composition and multiple possible paths.
  */
-public class wave {
+public class Wave {
     private final int waveNumber;
     private final boolean isBossWave;
     private final int numberOfEnemies;
     private final float spawnRate; // Enemies per second
     private final List<Entity> waypoints;
 
-    public wave(int waveNumber, boolean isBossWave, int numberOfEnemies, float spawnRate, List<Entity> waypoints) {
+    public Wave(int waveNumber, boolean isBossWave, int numberOfEnemies, float spawnRate, List<Entity> waypoints) {
         this.waveNumber = waveNumber;
         this.isBossWave = isBossWave;
         this.numberOfEnemies = numberOfEnemies;

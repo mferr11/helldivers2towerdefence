@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
+import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
 import com.csse3200.game.components.enemy.ClickableComponent;
@@ -15,6 +16,7 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 //import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 import java.util.List;
 
@@ -98,6 +100,8 @@ public class EnemyFactory {
      * @param enemy The enemy entity to destroy
      */
     private static void destroyEnemy(Entity enemy) {
+        ServiceLocator.getGameAreaEvents().trigger("enemyKilled");
+
         Gdx.app.postRunnable(() -> {
             enemy.dispose();
         });

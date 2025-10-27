@@ -21,7 +21,7 @@ public class ClickableComponent extends Component{
     public void create() {
         super.create();
 
-        mockCombatStat = new CombatStatsComponent(100, 10, 1);
+        mockCombatStat = new CombatStatsComponent(100, 10, 0);
     }
     
     @Override

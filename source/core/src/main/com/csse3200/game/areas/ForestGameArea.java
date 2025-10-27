@@ -7,7 +7,8 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.waveSystem.wave;
+import com.csse3200.game.events.EventHandler;
+import com.csse3200.game.waveSystem.Wave;
 import com.csse3200.game.entities.factories.EnemyFactory;
 import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
@@ -24,8 +25,13 @@ import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
-  private List<wave> waves;
+  private List<Wave> waves;
   private Timer.Task spawnTask;
+  private int waveEnemiesKilled = 0;
+  private Wave currentWave;
+
+  private final EventHandler events;
+  private boolean listenersRegistered = false;
 
   private static java.util.List<Entity> waypointEntityList = new java.util.ArrayList<>();
   private static java.util.List<GridPoint2> waypointsGridPointList = new java.util.ArrayList<>();
@@ -61,12 +67,22 @@ public class ForestGameArea extends GameArea {
    */
   public ForestGameArea(TerrainFactory terrainFactory) {
     super();
+    this.events = new EventHandler();
     this.terrainFactory = terrainFactory;
+  }
+
+  public EventHandler getEvents() {
+    return events;
   }
 
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    ServiceLocator.registerGameAreaEvents(this.getEvents());
+
+    this.getEvents().addListener("enemyKilled", this::checkEnemyKills);
+
+    createWaveManager();
     initialiseWaypoints();
     initialiseWaves();
     startWaveSpawning();
@@ -80,7 +96,6 @@ public class ForestGameArea extends GameArea {
     //player = spawnPlayer();
     //spawnGhosts();
     //spawnGhostKing();
-    spawnEnemy();
 
     //playMusic();
   }
@@ -88,11 +103,11 @@ public class ForestGameArea extends GameArea {
   private void initialiseWaves() {
     waves = new ArrayList<>();
 
-    waves.add(new wave(0, false, 5, 1f, waypointEntityList));
+    waves.add(new Wave(0, false, 5, 1f, waypointEntityList));
   }
 
   private void startWaveSpawning() {
-    wave currentWave = waves.get(0);
+    currentWave = waves.get(0);
     final int[] enemiesSpawned = {0};
       
     spawnTask = Timer.schedule(new Timer.Task() {
@@ -113,6 +128,18 @@ public class ForestGameArea extends GameArea {
           }
         }
     }, 0, currentWave.getSpawnRate());  // Start immediately (0 delay), repeat every spawnRate seconds
+  }
+
+  private void createWaveManager() {
+
+  }
+
+  public void checkEnemyKills() {
+    waveEnemiesKilled++;
+    System.out.println(waveEnemiesKilled);
+    if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
+      System.out.println("Victory!");
+    }
   }
 
   private void displayUI() {
