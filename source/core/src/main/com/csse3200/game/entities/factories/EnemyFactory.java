@@ -25,6 +25,7 @@ public class EnemyFactory {
     // Combat Stuff
     private static int DEFUALT_HEALTH = 50;
     private static int DEFAULT_DAMAGE = 10;
+    private static int DEFAULT_ARMOUR_RATING = 0;
 
     // Misc
     private static float DEFAULT_CLICK_RADIUS = 0.7f;
@@ -53,7 +54,7 @@ public class EnemyFactory {
             .addComponent(new PhysicsComponent())
             .addComponent(new PhysicsMovementComponent())
             .addComponent(new HitboxComponent())
-            .addComponent(new CombatStatsComponent(DEFUALT_HEALTH, DEFAULT_DAMAGE))
+            .addComponent(new CombatStatsComponent(DEFUALT_HEALTH, DEFAULT_DAMAGE, DEFAULT_ARMOUR_RATING))
             .addComponent(waypointTracker)
             .addComponent(aiComponent)
             // TextureRenderComponent is placeholder until I implement animations

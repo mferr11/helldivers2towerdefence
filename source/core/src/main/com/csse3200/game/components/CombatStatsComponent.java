@@ -13,10 +13,12 @@ public class CombatStatsComponent extends Component {
   private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
   private int health;
   private int baseAttack;
+  private int armourRating;
 
-  public CombatStatsComponent(int health, int baseAttack) {
+  public CombatStatsComponent(int health, int baseAttack, int armourRating) {
     setHealth(health);
     setBaseAttack(baseAttack);
+    setArmourRating(armourRating);
   }
 
   /**
@@ -84,8 +86,36 @@ public class CombatStatsComponent extends Component {
     }
   }
 
+  /**
+   * Sets the entity's armour ratinge. Armour rating has a minimum bound of 0.
+   *
+   * @param Rating Armour rating
+   */
+  public void setArmourRating(int Rating) {
+    if (Rating >= 0) {
+      this.armourRating = Rating;
+    } else {
+      logger.error("Can not set armour rating to a negative attack value");
+    }
+  }
+
   public void hit(CombatStatsComponent attacker) {
-    int newHealth = getHealth() - attacker.getBaseAttack();
-    setHealth(newHealth);
+    if (this.armourRating == attacker.armourRating) {
+      int newHealth = getHealth() - attacker.getBaseAttack();
+      setHealth(newHealth);
+      return;
+    }
+
+    if (this.armourRating < attacker.armourRating) {
+      int newHealth = getHealth() - Math.round((attacker.getBaseAttack() * 2f));
+      setHealth(newHealth);
+      return;
+    }
+
+    if (this.armourRating == attacker.armourRating) {
+      int newHealth = getHealth() - Math.round((attacker.getBaseAttack() * 0.5f));
+      setHealth(newHealth);
+      return;
+    }
   }
 }

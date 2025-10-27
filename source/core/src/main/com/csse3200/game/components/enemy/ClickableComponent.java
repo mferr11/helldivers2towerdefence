@@ -11,9 +11,17 @@ import com.csse3200.game.rendering.Renderer;
 
 public class ClickableComponent extends Component{
     private float clickRadius;
+    private CombatStatsComponent mockCombatStat;
 
     public ClickableComponent(float clickRadius) {
         this.clickRadius = clickRadius;
+    }
+
+    @Override
+    public void create() {
+        super.create();
+
+        mockCombatStat = new CombatStatsComponent(100, 10, 1);
     }
     
     @Override
@@ -33,7 +41,7 @@ public class ClickableComponent extends Component{
                 // Check if click is close to enemy
                 if (Math.abs(worldClickPos.x - (entityPos.x + clickRadius/2)) < clickRadius &&
                     Math.abs(worldClickPos.y - (entityPos.y + clickRadius)) < clickRadius) {
-                    entity.getComponent(CombatStatsComponent.class).addHealth(-10);
+                    entity.getComponent(CombatStatsComponent.class).hit(mockCombatStat);
                 }
             }
         }
