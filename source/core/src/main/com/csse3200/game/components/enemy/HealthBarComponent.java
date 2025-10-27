@@ -18,18 +18,15 @@ import org.slf4j.LoggerFactory;
 public class HealthBarComponent extends RenderComponent {
     private static final Logger logger = LoggerFactory.getLogger(HealthBarComponent.class);
     
-    // 默认血条尺寸
     private static final float DEFAULT_WIDTH = 1.5f;
     private static final float DEFAULT_HEIGHT = 0.15f;
     private static final float DEFAULT_OFFSET_Y = 0.8f;
     
-    // 血条颜色
     private static final Color HEALTH_BAR_BACKGROUND = new Color(0.3f, 0.3f, 0.3f, 0.8f);
     private static final Color HEALTH_BAR_FULL = new Color(0.2f, 0.8f, 0.2f, 0.9f);
     private static final Color HEALTH_BAR_MEDIUM = new Color(1.0f, 0.8f, 0.0f, 0.9f);
     private static final Color HEALTH_BAR_LOW = new Color(0.8f, 0.2f, 0.2f, 0.9f);
     
-    // 可配置的血条尺寸
     private float width;
     private float height;
     private float offsetY;

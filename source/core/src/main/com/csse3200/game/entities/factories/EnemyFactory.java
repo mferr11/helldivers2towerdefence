@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
@@ -25,6 +26,7 @@ public class EnemyFactory {
     // Combat Stuff
     private static int DEFUALT_HEALTH = 50;
     private static int DEFAULT_DAMAGE = 10;
+    private static float DEFAULT_SPEED = 2f;
     private static int DEFAULT_ARMOUR_RATING = 0;
 
     // Misc
@@ -60,6 +62,8 @@ public class EnemyFactory {
             // TextureRenderComponent is placeholder until I implement animations
             .addComponent(new TextureRenderComponent(DEFAULT_TEXTURE_PATH));
             // .addComponent(animations);
+
+        baseEnemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(new Vector2(DEFAULT_SPEED, DEFAULT_SPEED));
 
         baseEnemy.getEvents().addListener("updateHealth", (EventListener1<Integer>) (health) -> takeDamage(baseEnemy, health));
         baseEnemy.getEvents().addListener("finishedChaseTask", () -> updateWaypointTarget(baseEnemy));

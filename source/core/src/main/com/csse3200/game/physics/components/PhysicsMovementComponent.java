@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 /** Movement controller for a physics-based entity. */
 public class PhysicsMovementComponent extends Component implements MovementController {
   private static final Logger logger = LoggerFactory.getLogger(PhysicsMovementComponent.class);
-  private static final Vector2 maxSpeed = Vector2Utils.ONE;
+  private static Vector2 maxSpeed = Vector2Utils.ONE;
 
   private PhysicsComponent physicsComponent;
   private Vector2 targetPosition;
@@ -69,8 +69,14 @@ public class PhysicsMovementComponent extends Component implements MovementContr
     this.targetPosition = target;
   }
 
+  public void setMaxSpeed(Vector2 speed) {
+    maxSpeed = speed;
+  }
+
   private void updateDirection(Body body) {
-    Vector2 desiredVelocity = getDirection().scl(maxSpeed);
+    // We use maxSpeed.x for both axes to keep movement consistent in all directions
+    // So that diagonal movement is not faster than horizontal/vertical movement
+    Vector2 desiredVelocity = getDirection().scl(maxSpeed.x);
     setToVelocity(body, desiredVelocity);
   }
 
