@@ -12,7 +12,6 @@ import com.csse3200.game.services.ServiceLocator;
 
 /** Chases a target entity until they get too far away or line of sight is lost */
 public class ChaseTask extends DefaultTask implements PriorityTask {
-  private boolean finished;
   private final Entity target;
   private final int priority;
   private final float viewDistance;
@@ -33,7 +32,6 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     this.priority = priority;
     this.viewDistance = viewDistance;
     this.maxChaseDistance = maxChaseDistance;
-    this.finished = finished;
     physics = ServiceLocator.getPhysicsService().getPhysics();
     debugRenderer = ServiceLocator.getRenderService().getDebug();
   }
@@ -53,12 +51,9 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     movementTask.setTarget(target.getPosition());
     movementTask.update();
     if (movementTask.getStatus() != Status.ACTIVE) {
-      if (!finished) {
         this.owner.getEntity().getEvents().trigger("finishedChaseTask");
-        finished = true;
       }
     }
-  }
 
   @Override
   public void stop() {

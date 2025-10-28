@@ -12,6 +12,7 @@ public class WaypointTrackerComponent extends Component {
     private int currentWaypoint;
     private int currentPriority;
     private List<Entity> waypoints;
+    private boolean finished;
 
     /**
      * Creates a waypoint tracker with default starting values.
@@ -22,6 +23,7 @@ public class WaypointTrackerComponent extends Component {
         this.waypoints = waypoints;
         this.currentWaypoint = 0;
         this.currentPriority = 1;
+        this.finished = false;
     }
 
     /**
@@ -49,6 +51,20 @@ public class WaypointTrackerComponent extends Component {
      */
     public List<Entity> getWaypoints() {
         return waypoints;
+    }
+
+    /**
+     * Sets the value of finished.
+     */
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    /**
+     * Gets the value of finished.
+     */
+    public boolean getFinished() {
+        return this.finished;
     }
 
     /**

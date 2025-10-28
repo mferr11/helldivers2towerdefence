@@ -89,7 +89,11 @@ public class EnemyFactory {
                     tracker.getCurrentPriority(), 
                     100, 100));
         } else {
-            System.out.println("Reached end of waypoint list!");
+            if (!tracker.getFinished()) {
+                // Reached the end of the waypoint list, do stuff once here
+                System.out.println("Reached end of waypoint list!");
+                tracker.setFinished(true); 
+            }
         }
     }
 
