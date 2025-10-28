@@ -3,10 +3,10 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
-import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
 import com.csse3200.game.components.enemy.ClickableComponent;
+import com.csse3200.game.components.enemy.EnemyComponent;
 import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
@@ -53,6 +53,7 @@ public class EnemyFactory {
                 100f, 100f));
 
         Entity baseEnemy = new Entity()
+            .addComponent(new EnemyComponent())
             .addComponent(new ClickableComponent(DEFAULT_CLICK_RADIUS))
             .addComponent(new HealthBarComponent())
             .addComponent(new PhysicsComponent())

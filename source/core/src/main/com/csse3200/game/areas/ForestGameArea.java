@@ -12,6 +12,7 @@ import com.csse3200.game.waveSystem.Wave;
 import com.csse3200.game.entities.factories.EnemyFactory;
 import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
+import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -46,6 +47,7 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
+    "images/tree.png",
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -82,16 +84,17 @@ public class ForestGameArea extends GameArea {
 
     this.getEvents().addListener("enemyKilled", this::checkEnemyKills);
 
+    loadAssets();
+    spawnTerrain();
+    displayUI();
+
+
     createWaveManager();
     initialiseWaypoints();
     initialiseWaves();
+    spawnTower();
     startWaveSpawning();
 
-    loadAssets();
-
-    displayUI();
-
-    spawnTerrain();
     //spawnTrees();
     //player = spawnPlayer();
     //spawnGhosts();
@@ -215,6 +218,12 @@ public class ForestGameArea extends GameArea {
     Entity newPlayer = PlayerFactory.createPlayer();
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     return newPlayer;
+  }
+
+  private Entity spawnTower() {
+    Entity newTower = TowerFactory.createBaseTower();
+    spawnEntityAt(newTower, new GridPoint2(5, 10), true, true);
+    return newTower;
   }
 
   private void spawnEnemy() {
