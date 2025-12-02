@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
-import com.csse3200.game.components.enemy.ClickableComponent;
+import com.csse3200.game.components.enemy.EnemyClickableComponent;
 import com.csse3200.game.components.enemy.EnemyComponent;
 import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
@@ -54,7 +54,7 @@ public class EnemyFactory {
 
         Entity baseEnemy = new Entity()
             .addComponent(new EnemyComponent())
-            .addComponent(new ClickableComponent(DEFAULT_CLICK_RADIUS))
+            .addComponent(new EnemyClickableComponent(DEFAULT_CLICK_RADIUS))
             .addComponent(new HealthBarComponent())
             .addComponent(new PhysicsComponent())
             .addComponent(new PhysicsMovementComponent())
@@ -120,7 +120,7 @@ public class EnemyFactory {
      * @param newHealth The enemy's health after taking damage
      */
     private static void takeDamage(Entity enemy, int newHealth) {
-        System.out.println("New Health: " + newHealth);
+        //System.out.println("New Health: " + newHealth);
         if (newHealth <= 0) {
             destroyEnemy(enemy);
         }

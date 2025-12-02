@@ -2,20 +2,19 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.ClickableComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.EventHandler;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.waveSystem.Wave;
 import com.csse3200.game.entities.factories.EnemyFactory;
-import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.badlogic.gdx.utils.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class ForestGameArea extends GameArea {
 
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
-  private static final float WALL_WIDTH = 0.1f;
+
   private static final String[] forestTextures = {
     "images/ghost_1.png",
     "images/grass_1.png",
@@ -77,16 +76,17 @@ public class ForestGameArea extends GameArea {
     ServiceLocator.registerGameAreaEvents(this.getEvents());
 
     this.getEvents().addListener("enemyKilled", this::checkEnemyKills);
+    this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
 
     loadAssets();
     spawnTerrain();
     displayUI();
 
+    spawnTowerClickSystem();
 
     createWaveManager();
     initialiseWaypoints();
     initialiseWaves();
-    spawnTower();
     startWaveSpawning();
 
     //spawnTrees();
@@ -95,6 +95,16 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
 
     //playMusic();
+  }
+
+  private void tryTowerPlacement(GridPoint2 location) {
+    spawnTower(location);
+  }
+
+  private void spawnTowerClickSystem() {
+    Entity towerClickSystem = new Entity();
+    towerClickSystem.addComponent(new ClickableComponent());
+    spawnEntity(towerClickSystem);
   }
 
   private void initialiseWaves() {
@@ -179,9 +189,9 @@ public class ForestGameArea extends GameArea {
     return newPlayer;
   }
 
-  private Entity spawnTower() {
+  private Entity spawnTower(GridPoint2 location) {
     Entity newTower = TowerFactory.createBaseTower();
-    spawnEntityAt(newTower, new GridPoint2(5, 10), true, true);
+    spawnEntityAt(newTower, location, true, true);
     return newTower;
   }
 

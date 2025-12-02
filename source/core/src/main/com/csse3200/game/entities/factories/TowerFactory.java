@@ -1,7 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.enemy.ClickableComponent;
+import com.csse3200.game.components.enemy.EnemyClickableComponent;
 import com.csse3200.game.components.towers.TowerRangeComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -43,7 +43,7 @@ public class TowerFactory {
 
         Entity baseTower = new Entity()
             .addComponent(new TextureRenderComponent(DEFAULT_TEXTURE_PATH))
-            .addComponent(new ClickableComponent(DEFAULT_CLICK_RADIUS))
+            //.addComponent(new EnemyClickableComponent(DEFAULT_CLICK_RADIUS))
             .addComponent(new TowerRangeComponent(
                 DEFAULT_TOWER_RADIUS, 
                 DEFAULT_ATTACK_COOLDOWN, 
