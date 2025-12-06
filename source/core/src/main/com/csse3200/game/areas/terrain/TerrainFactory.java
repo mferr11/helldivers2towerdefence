@@ -1,5 +1,7 @@
 package com.csse3200.game.areas.terrain;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,13 +15,14 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.csse3200.game.areas.terrain.TerrainComponent.TerrainOrientation;
 import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.RandomUtils;
 
 /** Factory for creating game terrains. */
 public class TerrainFactory {
-  private static final GridPoint2 MAP_SIZE = new GridPoint2(40, 30);
+  private static final GridPoint2 MAP_SIZE = new GridPoint2(20, 15);
   private static final int TUFT_TILE_COUNT = 0;
   private static final int ROCK_TILE_COUNT = 0;
 
@@ -53,7 +56,7 @@ public class TerrainFactory {
    * @param terrainType Terrain to create
    * @return Terrain component which renders the terrain
    */
-  public TerrainComponent createTerrain(TerrainType terrainType) {
+  public TerrainComponent createTerrain(TerrainType terrainType, List<GridPoint2> waypoints) {
     ResourceService resourceService = ServiceLocator.getResourceService();
     switch (terrainType) {
       case FOREST_DEMO:
@@ -63,7 +66,7 @@ public class TerrainFactory {
             new TextureRegion(resourceService.getAsset("images/grass_2.png", Texture.class));
         TextureRegion orthoRocks =
             new TextureRegion(resourceService.getAsset("images/grass_3.png", Texture.class));
-        return createForestDemoTerrain(0.5f, orthoGrass, orthoTuft, orthoRocks);
+        return createForestDemoTerrain(1f, orthoGrass, orthoTuft, orthoRocks, waypoints);
       case FOREST_DEMO_ISO:
         TextureRegion isoGrass =
             new TextureRegion(resourceService.getAsset("images/iso_grass_1.png", Texture.class));
@@ -71,7 +74,7 @@ public class TerrainFactory {
             new TextureRegion(resourceService.getAsset("images/iso_grass_2.png", Texture.class));
         TextureRegion isoRocks =
             new TextureRegion(resourceService.getAsset("images/iso_grass_3.png", Texture.class));
-        return createForestDemoTerrain(1f, isoGrass, isoTuft, isoRocks);
+        return createForestDemoTerrain(1f, isoGrass, isoTuft, isoRocks, waypoints);
       case FOREST_DEMO_HEX:
         TextureRegion hexGrass =
             new TextureRegion(resourceService.getAsset("images/hex_grass_1.png", Texture.class));
@@ -79,16 +82,16 @@ public class TerrainFactory {
             new TextureRegion(resourceService.getAsset("images/hex_grass_2.png", Texture.class));
         TextureRegion hexRocks =
             new TextureRegion(resourceService.getAsset("images/hex_grass_3.png", Texture.class));
-        return createForestDemoTerrain(1f, hexGrass, hexTuft, hexRocks);
+        return createForestDemoTerrain(1f, hexGrass, hexTuft, hexRocks, waypoints);
       default:
         return null;
     }
   }
 
   private TerrainComponent createForestDemoTerrain(
-      float tileWorldSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks) {
+      float tileWorldSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks, List<GridPoint2> waypoints) {
     GridPoint2 tilePixelSize = new GridPoint2(grass.getRegionWidth(), grass.getRegionHeight());
-    TiledMap tiledMap = createForestDemoTiles(tilePixelSize, grass, grassTuft, rocks);
+    TiledMap tiledMap = createForestDemoTiles(tilePixelSize, grass, grassTuft, rocks, waypoints);
     TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
@@ -107,7 +110,7 @@ public class TerrainFactory {
   }
 
   private TiledMap createForestDemoTiles(
-      GridPoint2 tileSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks) {
+      GridPoint2 tileSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks, List<GridPoint2> waypoints) {
     TiledMap tiledMap = new TiledMap();
     TerrainTile grassTile = new TerrainTile(grass);
     TerrainTile grassTuftTile = new TerrainTile(grassTuft);
@@ -120,6 +123,28 @@ public class TerrainFactory {
     // Add some grass and rocks
     fillTilesAtRandom(layer, MAP_SIZE, grassTuftTile, TUFT_TILE_COUNT);
     fillTilesAtRandom(layer, MAP_SIZE, rockTile, ROCK_TILE_COUNT);
+
+    // Draw rocks along the entire path between waypoints
+    for (int i = 0; i < waypoints.size() - 1; i++) {
+        GridPoint2 start = waypoints.get(i);
+        GridPoint2 end = waypoints.get(i + 1);
+        
+        // Determine the direction to step (1, -1, or 0 for each axis)
+        int dx = Integer.signum(end.x - start.x);
+        int dy = Integer.signum(end.y - start.y);
+        
+        int x = start.x;
+        int y = start.y;
+        
+        // Draw tiles from start to end
+        while (x != end.x || y != end.y) {
+            fillSpecificTile(layer, new GridPoint2(x, y), rockTile);
+            x += dx;
+            y += dy;
+        }
+    }
+    // Draw the final waypoint
+    fillSpecificTile(layer, waypoints.get(waypoints.size() - 1), rockTile);
 
     tiledMap.getLayers().add(layer);
     return tiledMap;
@@ -145,6 +170,12 @@ public class TerrainFactory {
         layer.setCell(x, y, cell);
       }
     }
+  }
+
+  private static void fillSpecificTile(TiledMapTileLayer layer, GridPoint2 location, TerrainTile tile) {
+    Cell cell = new Cell();
+    cell.setTile(tile);
+    layer.setCell(location.x, location.y, cell);
   }
 
   /**

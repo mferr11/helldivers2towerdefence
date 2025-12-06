@@ -33,7 +33,7 @@ public class TowerPreviewComponent extends Component {
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
 
             if (Gdx.input.justTouched()) {
-                GridPoint2 location = new GridPoint2((int) worldClickPos.x * 2, (int) worldClickPos.y * 2);
+                GridPoint2 location = new GridPoint2((int) worldClickPos.x, (int) worldClickPos.y);
                 if (worldClickPos.y < 0) {
                     System.out.println("Tower placement out of bounds");
                     return;

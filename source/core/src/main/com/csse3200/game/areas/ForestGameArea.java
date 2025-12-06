@@ -76,18 +76,21 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    towerPlacementList.clear();
     ServiceLocator.registerGameAreaEvents(this.getEvents());
 
     this.getEvents().addListener("enemyKilled", this::checkEnemyKills);
     this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
 
     loadAssets();
-    spawnTerrain();
+
+    initialiseWaypoints();
+    spawnTerrain(waypointsGridPointList);
+
     displayUI();
 
     spawnTowerPreview();
 
-    initialiseWaypoints();
     initialiseWaves();
     startWaveSpawning();
 
@@ -157,9 +160,9 @@ public class ForestGameArea extends GameArea {
     spawnEntity(ui);
   }
 
-  private void spawnTerrain() {
+  private void spawnTerrain(List<GridPoint2> waypoints) {
     // Background terrain
-    terrain = terrainFactory.createTerrain(TerrainType.FOREST_DEMO);
+    terrain = terrainFactory.createTerrain(TerrainType.FOREST_DEMO, waypoints);
     spawnEntity(new Entity().addComponent(terrain));
   }
 
@@ -167,16 +170,16 @@ public class ForestGameArea extends GameArea {
     waypointsGridPointList.clear();
     waypointEntityList.clear();
 
-    waypointsGridPointList.add(new GridPoint2(0, 10));
-    waypointsGridPointList.add(new GridPoint2(10, 10));
+    waypointsGridPointList.add(new GridPoint2(0, 5));
+    waypointsGridPointList.add(new GridPoint2(2, 5));
+    waypointsGridPointList.add(new GridPoint2(2, 2));
+    waypointsGridPointList.add(new GridPoint2(7, 2));
+    waypointsGridPointList.add(new GridPoint2(7, 5));
     waypointsGridPointList.add(new GridPoint2(10, 5));
-    waypointsGridPointList.add(new GridPoint2(20, 5));
-    waypointsGridPointList.add(new GridPoint2(20, 10));
-    waypointsGridPointList.add(new GridPoint2(35, 10));
 
     for (GridPoint2 wp : waypointsGridPointList) {
       Entity waypointEntity = new Entity();
-      waypointEntity.setPosition(wp.x/2, wp.y/2);
+      waypointEntity.setPosition(wp.x, wp.y);
       waypointEntityList.add(waypointEntity);
     }
   }
