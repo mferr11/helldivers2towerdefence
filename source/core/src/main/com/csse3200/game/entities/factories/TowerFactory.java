@@ -16,7 +16,7 @@ import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 public class TowerFactory {
 
     private static int DEFAULT_HEALTH = 50;
-    private static int DEFAULT_DAMAGE = 5;
+    private static int DEFAULT_DAMAGE = 3;
     private static int DEFAULT_ARMOUR_RATING = 0;
     private static float DEFAULT_TOWER_RADIUS = 4f;
     private static float DEFAULT_ATTACK_COOLDOWN = 0.2f;

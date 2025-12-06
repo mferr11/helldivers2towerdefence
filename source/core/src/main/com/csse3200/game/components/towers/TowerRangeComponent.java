@@ -21,7 +21,6 @@ public class TowerRangeComponent extends Component {
     private float currentCooldown;
     private Entity currentTarget;
     private CombatStatsComponent combatStat;
-    private TargetingStrategy targetingStrategy;
     
     /**
      * Constructs a new TowerRangeComponent with specified attack parameters.
@@ -35,7 +34,6 @@ public class TowerRangeComponent extends Component {
         this.attackRange = attackRange;
         this.attackCooldown = attackCooldown;
         this.currentCooldown = 0f;
-        this.targetingStrategy = TargetingStrategy.CLOSEST;
     }
     
     /**
@@ -101,13 +99,8 @@ public class TowerRangeComponent extends Component {
         if (enemies.size == 0) {
             return null;
         }
-        
-        return switch (targetingStrategy) {
-            case CLOSEST -> findClosestEnemy(enemies);
-            case FIRST -> findFirstEnemy(enemies);
-            case STRONGEST -> findStrongestEnemy(enemies);
-            case WEAKEST -> findWeakestEnemy(enemies);
-        };
+
+        return findClosestEnemy(enemies);
     }
     
     /**
@@ -131,60 +124,7 @@ public class TowerRangeComponent extends Component {
         }
         
         return closest;
-    }
-    
-    /**
-     * Finds the first enemy in the provided array.
-     * This strategy can be used for simple first-come-first-served targeting.
-     *
-     * @param enemies array of enemy entities
-     * @return the first enemy in the array
-     */
-    private Entity findFirstEnemy(Array<Entity> enemies) {
-        return enemies.first();
-    }
-    
-    /**
-     * Finds the enemy with the highest health from a list of enemies.
-     *
-     * @param enemies array of enemy entities to search
-     * @return the enemy with the most health, or null if none found
-     */
-    private Entity findStrongestEnemy(Array<Entity> enemies) {
-        Entity strongest = null;
-        int maxHealth = 0;
-        
-        for (Entity enemy : enemies) {
-            CombatStatsComponent combat = enemy.getComponent(CombatStatsComponent.class);
-            if (combat != null && combat.getHealth() > maxHealth) {
-                maxHealth = combat.getHealth();
-                strongest = enemy;
-            }
-        }
-        
-        return strongest;
-    }
-    
-    /**
-     * Finds the enemy with the lowest health from a list of enemies.
-     *
-     * @param enemies array of enemy entities to search
-     * @return the enemy with the least health, or null if none found
-     */
-    private Entity findWeakestEnemy(Array<Entity> enemies) {
-        Entity weakest = null;
-        int minHealth = Integer.MAX_VALUE;
-        
-        for (Entity enemy : enemies) {
-            CombatStatsComponent combat = enemy.getComponent(CombatStatsComponent.class);
-            if (combat != null && combat.getHealth() < minHealth) {
-                minHealth = combat.getHealth();
-                weakest = enemy;
-            }
-        }
-        
-        return weakest;
-    }
+    }   
     
     /**
      * Checks if a target entity is valid for attacking.
@@ -320,40 +260,5 @@ public class TowerRangeComponent extends Component {
      */
     public void setCombatStat(CombatStatsComponent combatStat) {
         this.combatStat = combatStat;
-    }
-    
-    /**
-     * Gets the current targeting strategy.
-     *
-     * @return the targeting strategy
-     */
-    public TargetingStrategy getTargetingStrategy() {
-        return targetingStrategy;
-    }
-    
-    /**
-     * Sets the targeting strategy for enemy selection.
-     *
-     * @param strategy the new targeting strategy
-     */
-    public void setTargetingStrategy(TargetingStrategy strategy) { 
-        this.targetingStrategy = strategy; 
-    }
-    
-    /**
-     * Enumeration of available targeting strategies for tower attacks.
-     */
-    public enum TargetingStrategy {
-        /** Target the closest enemy */
-        CLOSEST,
-        
-        /** Target the first enemy in the list */
-        FIRST,
-        
-        /** Target the enemy with the most health */
-        STRONGEST,
-        
-        /** Target the enemy with the least health */
-        WEAKEST
     }
 }

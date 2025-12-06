@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
 import com.csse3200.game.components.CameraComponent;
-import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.rendering.TextureRenderComponentAlpha;
+import com.csse3200.game.services.ServiceLocator;
 
 public class TowerPreviewComponent extends Component {
     
@@ -31,6 +31,16 @@ public class TowerPreviewComponent extends Component {
             }
 
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
+
+            if (Gdx.input.justTouched()) {
+                GridPoint2 location = new GridPoint2((int) worldClickPos.x * 2, (int) worldClickPos.y * 2);
+                if (worldClickPos.y < 0) {
+                    System.out.println("Tower placement out of bounds");
+                    return;
+                } else {
+                    ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
+                }
+            }
         }      
     }
 

@@ -4,7 +4,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.GridPoint2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
-import com.csse3200.game.components.ClickableComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.EventHandler;
@@ -20,11 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
+  private static String levelName = "Test Level";
+
   private List<Wave> waves;
   private Timer.Task spawnTask;
   private int waveEnemiesKilled = 0;
@@ -85,7 +85,6 @@ public class ForestGameArea extends GameArea {
     spawnTerrain();
     displayUI();
 
-    spawnTowerClickSystem();
     spawnTowerPreview();
 
     initialiseWaypoints();
@@ -112,12 +111,6 @@ public class ForestGameArea extends GameArea {
   private void spawnTowerPreview() {
     Entity towerPreview = TowerFactory.createTowerPreview();
     spawnEntity(towerPreview);
-  }
-
-  private void spawnTowerClickSystem() {
-    Entity towerClickSystem = new Entity();
-    towerClickSystem.addComponent(new ClickableComponent());
-    spawnEntity(towerClickSystem);
   }
 
   private void initialiseWaves() {
@@ -160,7 +153,7 @@ public class ForestGameArea extends GameArea {
 
   private void displayUI() {
     Entity ui = new Entity();
-    ui.addComponent(new GameAreaDisplay("Box Forest"));
+    ui.addComponent(new GameAreaDisplay(levelName));
     spawnEntity(ui);
   }
 
