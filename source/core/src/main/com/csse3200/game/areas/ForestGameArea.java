@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
@@ -33,6 +34,8 @@ public class ForestGameArea extends GameArea {
 
   private static java.util.List<Entity> waypointEntityList = new java.util.ArrayList<>();
   private static java.util.List<GridPoint2> waypointsGridPointList = new java.util.ArrayList<>();
+
+  private static java.util.List<GridPoint2> towerPlacementList = new java.util.ArrayList<>();
 
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
@@ -98,7 +101,12 @@ public class ForestGameArea extends GameArea {
   }
 
   private void tryTowerPlacement(GridPoint2 location) {
-    spawnTower(location);
+    if (towerPlacementList.contains(location)) {
+      System.out.println("Tower already at this location.");
+    } else {
+      spawnTower(location);
+      towerPlacementList.add(location);
+    }
   }
 
   private void spawnTowerPreview() {
