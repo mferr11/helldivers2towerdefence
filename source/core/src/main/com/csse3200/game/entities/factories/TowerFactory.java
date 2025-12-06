@@ -2,9 +2,11 @@ package com.csse3200.game.entities.factories;
 
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.EnemyClickableComponent;
+import com.csse3200.game.components.towers.TowerPreviewComponent;
 import com.csse3200.game.components.towers.TowerRangeComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 
 /**
  * Factory class to create tower entities with predefined components and configurations.
@@ -21,6 +23,15 @@ public class TowerFactory {
     
     private static float DEFAULT_CLICK_RADIUS = 0.7f;
     private static String DEFAULT_TEXTURE_PATH = "images/tree.png";
+    private static float PREVIEW_OPACITY = 0.5f;
+
+    public static Entity createTowerPreview() {
+        Entity towerPreview = new Entity()
+        .addComponent(new TowerPreviewComponent())
+        .addComponent(new TextureRenderComponentAlpha(DEFAULT_TEXTURE_PATH, PREVIEW_OPACITY));
+
+        return towerPreview;
+    }
 
     /**
      * Creates a basic tower entity with default components and statistics.

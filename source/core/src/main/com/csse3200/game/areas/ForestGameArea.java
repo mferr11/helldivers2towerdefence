@@ -83,8 +83,8 @@ public class ForestGameArea extends GameArea {
     displayUI();
 
     spawnTowerClickSystem();
+    spawnTowerPreview();
 
-    createWaveManager();
     initialiseWaypoints();
     initialiseWaves();
     startWaveSpawning();
@@ -99,6 +99,11 @@ public class ForestGameArea extends GameArea {
 
   private void tryTowerPlacement(GridPoint2 location) {
     spawnTower(location);
+  }
+
+  private void spawnTowerPreview() {
+    Entity towerPreview = TowerFactory.createTowerPreview();
+    spawnEntity(towerPreview);
   }
 
   private void spawnTowerClickSystem() {
@@ -135,10 +140,6 @@ public class ForestGameArea extends GameArea {
           }
         }
     }, 0, currentWave.getSpawnRate());  // Start immediately (0 delay), repeat every spawnRate seconds
-  }
-
-  private void createWaveManager() {
-
   }
 
   public void checkEnemyKills() {
@@ -191,7 +192,7 @@ public class ForestGameArea extends GameArea {
 
   private Entity spawnTower(GridPoint2 location) {
     Entity newTower = TowerFactory.createBaseTower();
-    spawnEntityAt(newTower, location, true, true);
+    spawnEntityAt(newTower, location, false, false);
     return newTower;
   }
 
