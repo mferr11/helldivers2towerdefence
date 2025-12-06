@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
 import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.Renderer;
+import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 
 public class TowerPreviewComponent extends Component {
     
@@ -20,7 +22,14 @@ public class TowerPreviewComponent extends Component {
             // Convert screen coordinates to world coordinates
             Vector3 worldClickPos = new Vector3(screenX, screenY, 0);
             camera.unproject(worldClickPos);
-            // GridPoint2 location = new GridPoint2((int) worldClickPos.x * 2, (int) worldClickPos.y * 2);
+            if (worldClickPos.y < 0) {
+                TextureRenderComponentAlpha alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
+                alphaComp.setAlphaValue(0);
+            } else {
+                TextureRenderComponentAlpha alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
+                alphaComp.setAlphaValue(0.5f);
+            }
+
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
         }      
     }

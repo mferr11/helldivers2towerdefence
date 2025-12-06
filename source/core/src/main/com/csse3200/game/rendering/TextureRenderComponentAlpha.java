@@ -32,6 +32,10 @@ public class TextureRenderComponentAlpha extends RenderComponent {
     entity.setScale(1f, (float) texture.getHeight() / texture.getWidth());
   }
 
+  public void setAlphaValue(float value) {
+    alphaValue = value;
+  }
+
   @Override
   protected void draw(SpriteBatch batch) {
     Vector2 position = entity.getPosition();

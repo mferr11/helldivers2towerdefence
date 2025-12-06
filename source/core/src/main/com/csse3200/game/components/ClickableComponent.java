@@ -24,7 +24,12 @@ public class ClickableComponent extends Component{
                 Vector3 worldClickPos = new Vector3(screenX, screenY, 0);
                 camera.unproject(worldClickPos);
                 GridPoint2 location = new GridPoint2((int) worldClickPos.x * 2, (int) worldClickPos.y * 2);
-                ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
+                if (worldClickPos.y < 0) {
+                    System.out.println("Tower placement out of bounds");
+                    return;
+                } else {
+                    ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
+                }
             }            
         }
     }
