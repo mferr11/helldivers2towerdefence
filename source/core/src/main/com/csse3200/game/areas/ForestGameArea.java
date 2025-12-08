@@ -201,7 +201,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnEnemy() {
-    GridPoint2 spawnPos = new GridPoint2(-10, 10);
+    GridPoint2 spawnPos = new GridPoint2(-5, 5);
     Entity enemy = EnemyFactory.createBaseEnemy(getWaypointEntityList());
     spawnEntityAt(enemy, spawnPos, true, true);
   }
