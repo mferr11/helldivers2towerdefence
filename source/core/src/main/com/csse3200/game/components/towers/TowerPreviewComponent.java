@@ -11,6 +11,28 @@ import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 import com.csse3200.game.services.ServiceLocator;
 
 public class TowerPreviewComponent extends Component {
+    private Boolean shouldBeVisible = true;
+    private TextureRenderComponentAlpha alphaComp;
+
+    @Override
+    public void create() {
+        super.create();
+        alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
+        setVisibility(false);
+    }
+
+    public void setVisibility(boolean newVisibility) {
+        if (shouldBeVisible) {
+            if (newVisibility) {
+                alphaComp.setAlphaValue(0.5f);
+            } else {
+                alphaComp.setAlphaValue(0);
+            }
+        } else {
+            alphaComp.setAlphaValue(0);
+            return;
+        }
+    }
     
     @Override
     public void update() {
@@ -23,11 +45,9 @@ public class TowerPreviewComponent extends Component {
             Vector3 worldClickPos = new Vector3(screenX, screenY, 0);
             camera.unproject(worldClickPos);
             if (worldClickPos.y < 0) {
-                TextureRenderComponentAlpha alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
-                alphaComp.setAlphaValue(0);
+                setVisibility(false);
             } else {
-                TextureRenderComponentAlpha alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
-                alphaComp.setAlphaValue(0.5f);
+                setVisibility(true);
             }
 
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
