@@ -14,7 +14,7 @@ import com.csse3200.game.services.ServiceLocator;
  * This component manages the tower's ability to detect, target, and attack enemies
  * within a specified range using various targeting strategies.
  */
-public class TowerRangeComponent extends Component {
+public class TowerAttackComponent extends Component {
     
     private float attackRange;
     private float attackCooldown;
@@ -23,13 +23,13 @@ public class TowerRangeComponent extends Component {
     private CombatStatsComponent combatStat;
     
     /**
-     * Constructs a new TowerRangeComponent with specified attack parameters.
+     * Constructs a new TowerAttackComponent with specified attack parameters.
      *
      * @param attackRange the maximum distance at which the tower can attack
      * @param attackCooldown the time delay between attacks in seconds
      * @param combatStat the combat statistics component for damage calculations
      */
-    public TowerRangeComponent(float attackRange, float attackCooldown, CombatStatsComponent combatStat) {
+    public TowerAttackComponent(float attackRange, float attackCooldown, CombatStatsComponent combatStat) {
         this.combatStat = combatStat;
         this.attackRange = attackRange;
         this.attackCooldown = attackCooldown;

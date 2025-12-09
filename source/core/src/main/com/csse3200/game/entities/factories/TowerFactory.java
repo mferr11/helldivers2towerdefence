@@ -1,192 +1,89 @@
 package com.csse3200.game.entities.factories;
 
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.enemy.EnemyClickableComponent;
+import com.csse3200.game.components.towers.TowerAttackComponent;
 import com.csse3200.game.components.towers.TowerPreviewComponent;
-import com.csse3200.game.components.towers.TowerRangeComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.TowerConfig;
+import com.csse3200.game.entities.configs.TowerConfigs;
+import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 
-/**
- * Factory class to create tower entities with predefined components and configurations.
- * This factory provides methods to instantiate towers with default values for combat,
- * rendering, and interaction components.
- */
 public class TowerFactory {
-
-    private static int DEFAULT_HEALTH = 50;
-    private static int DEFAULT_DAMAGE = 3;
-    private static int DEFAULT_ARMOUR_RATING = 0;
-    private static float DEFAULT_TOWER_RADIUS = 4f;
-    private static float DEFAULT_ATTACK_COOLDOWN = 0.2f;
+    private static final TowerConfigs configs = 
+        FileLoader.readClass(TowerConfigs.class, "configs/towers.json");
+    private static final float PREVIEW_OPACITY = 0.5f;
     
-    private static float DEFAULT_CLICK_RADIUS = 0.7f;
-    private static String DEFAULT_TEXTURE_PATH = "images/tree.png";
-    private static float PREVIEW_OPACITY = 0.5f;
-
-    public static Entity createTowerPreview() {
-        Entity towerPreview = new Entity()
-        .addComponent(new TowerPreviewComponent())
-        .addComponent(new TextureRenderComponentAlpha(DEFAULT_TEXTURE_PATH, PREVIEW_OPACITY));
-
-        return towerPreview;
+    public enum TowerType {
+        MACHINEGUN("machinegun"),
+        RAILGUN("railgun");
+        
+        private final String configKey;
+        
+        TowerType(String configKey) {
+            this.configKey = configKey;
+        }
+        
+        public String getConfigKey() {
+            return configKey;
+        }
     }
-
+    
     /**
-     * Creates a basic tower entity with default components and statistics.
-     * The tower includes:
-     * <ul>
-     *   <li>Texture rendering component</li>
-     *   <li>Clickable component for user interaction</li>
-     *   <li>Tower range component for attack behavior</li>
-     *   <li>Combat statistics component</li>
-     * </ul>
-     *
-     * @return a new Entity configured as a base tower
+     * Create a tower of the specified type
+     * @param type The type of tower to create
+     * @return The tower entity
      */
-    public static Entity createBaseTower() {
+    public static Entity createTower(TowerType type) {
+        TowerConfig config = configs.towers.get(type.getConfigKey());
+        
+        if (config == null) {
+            System.err.println("Failed to load tower config for: " + type.getConfigKey());
+            config = new TowerConfig(); // Use defaults
+        }
+        
+        return createTower(config);
+    }
+    
+    /**
+     * Create a tower from a config
+     * @param config The tower configuration
+     * @return The tower entity
+     */
+    private static Entity createTower(TowerConfig config) {
         CombatStatsComponent combatStats = new CombatStatsComponent(
-            DEFAULT_HEALTH, 
-            DEFAULT_DAMAGE, 
-            DEFAULT_ARMOUR_RATING
+            config.health, 
+            config.baseAttack, 
+            config.baseArmourRating
         );
 
-        Entity baseTower = new Entity()
-            .addComponent(new TextureRenderComponent(DEFAULT_TEXTURE_PATH))
-            //.addComponent(new EnemyClickableComponent(DEFAULT_CLICK_RADIUS))
-            .addComponent(new TowerRangeComponent(
-                DEFAULT_TOWER_RADIUS, 
-                DEFAULT_ATTACK_COOLDOWN, 
+        Entity tower = new Entity()
+            .addComponent(new TextureRenderComponent(config.texturePath))
+            .addComponent(new TowerAttackComponent(
+                config.attackRadius, 
+                config.attackCooldown, 
                 combatStats
             ));
 
-        return baseTower;
+        return tower;
     }
     
     /**
-     * Gets the default health value for towers.
-     *
-     * @return the default health
+     * Create a tower preview for the specified type
      */
-    public static int getDefaultHealth() {
-        return DEFAULT_HEALTH;
-    }
-    
-    /**
-     * Sets the default health value for towers.
-     *
-     * @param health the new default health
-     */
-    public static void setDefaultHealth(int health) {
-        DEFAULT_HEALTH = health;
-    }
-    
-    /**
-     * Gets the default damage value for towers.
-     *
-     * @return the default damage
-     */
-    public static int getDefaultDamage() {
-        return DEFAULT_DAMAGE;
-    }
-    
-    /**
-     * Sets the default damage value for towers.
-     *
-     * @param damage the new default damage
-     */
-    public static void setDefaultDamage(int damage) {
-        DEFAULT_DAMAGE = damage;
-    }
-    
-    /**
-     * Gets the default armour rating for towers.
-     *
-     * @return the default armour rating
-     */
-    public static int getDefaultArmourRating() {
-        return DEFAULT_ARMOUR_RATING;
-    }
-    
-    /**
-     * Sets the default armour rating for towers.
-     *
-     * @param armourRating the new default armour rating
-     */
-    public static void setDefaultArmourRating(int armourRating) {
-        DEFAULT_ARMOUR_RATING = armourRating;
-    }
-    
-    /**
-     * Gets the default tower attack radius.
-     *
-     * @return the default tower radius
-     */
-    public static float getDefaultTowerRadius() {
-        return DEFAULT_TOWER_RADIUS;
-    }
-    
-    /**
-     * Sets the default tower attack radius.
-     *
-     * @param radius the new default tower radius
-     */
-    public static void setDefaultTowerRadius(float radius) {
-        DEFAULT_TOWER_RADIUS = radius;
-    }
-    
-    /**
-     * Gets the default attack cooldown for towers.
-     *
-     * @return the default attack cooldown in seconds
-     */
-    public static float getDefaultAttackCooldown() {
-        return DEFAULT_ATTACK_COOLDOWN;
-    }
-    
-    /**
-     * Sets the default attack cooldown for towers.
-     *
-     * @param cooldown the new default attack cooldown in seconds
-     */
-    public static void setDefaultAttackCooldown(float cooldown) {
-        DEFAULT_ATTACK_COOLDOWN = cooldown;
-    }
-    
-    /**
-     * Gets the default click detection radius.
-     *
-     * @return the default click radius
-     */
-    public static float getDefaultClickRadius() {
-        return DEFAULT_CLICK_RADIUS;
-    }
-    
-    /**
-     * Sets the default click detection radius.
-     *
-     * @param radius the new default click radius
-     */
-    public static void setDefaultClickRadius(float radius) {
-        DEFAULT_CLICK_RADIUS = radius;
-    }
-    
-    /**
-     * Gets the default texture path for towers.
-     *
-     * @return the default texture path
-     */
-    public static String getDefaultTexturePath() {
-        return DEFAULT_TEXTURE_PATH;
-    }
-    
-    /**
-     * Sets the default texture path for towers.
-     *
-     * @param path the new default texture path
-     */
-    public static void setDefaultTexturePath(String path) {
-        DEFAULT_TEXTURE_PATH = path;
+    public static Entity createTowerPreview(TowerType type) {
+        TowerConfig config = configs.towers.get(type.getConfigKey());
+        
+        if (config == null) {
+            System.err.println("Failed to load tower config for preview: " + type.getConfigKey());
+            config = new TowerConfig();
+        }
+        
+        Entity towerPreview = new Entity()
+            .addComponent(new TowerPreviewComponent())
+            .addComponent(new TextureRenderComponentAlpha(config.texturePath, PREVIEW_OPACITY));
+
+        return towerPreview;
     }
 }

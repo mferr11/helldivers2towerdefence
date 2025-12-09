@@ -12,6 +12,7 @@ import com.csse3200.game.waveSystem.Wave;
 import com.csse3200.game.entities.factories.EnemyFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.entities.factories.TowerFactory;
+import com.csse3200.game.entities.factories.TowerFactory.TowerType;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.deckUI;
@@ -116,7 +117,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnTowerPreview() {
-    Entity towerPreview = TowerFactory.createTowerPreview();
+    Entity towerPreview = TowerFactory.createTowerPreview(TowerType.MACHINEGUN);
     spawnEntity(towerPreview);
   }
 
@@ -219,7 +220,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private Entity spawnTower(GridPoint2 location) {
-    Entity newTower = TowerFactory.createBaseTower();
+    Entity newTower = TowerFactory.createTower(TowerType.MACHINEGUN);
     spawnEntityAt(newTower, location, false, false);
     return newTower;
   }
