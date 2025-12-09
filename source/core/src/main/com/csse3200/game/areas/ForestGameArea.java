@@ -5,7 +5,9 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.TowerConfig;
 import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.waveSystem.Wave;
@@ -231,8 +233,31 @@ public class ForestGameArea extends GameArea {
   }
 
 private Entity spawnTower(GridPoint2 location) {
+    // Get the cost of the selected tower
+    TowerConfig config = TowerFactory.getConfig(selectedTowerType);
+    InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
+    
+    // Check if player can afford it
+    if (!inventory.hasGold(config.cost)) {
+        System.out.println("Cannot place tower: Not enough gold!");
+        return null;
+    }
+    
+    // Deduct the cost
+    inventory.addGold(-config.cost);
+    System.out.println("Placed " + selectedTowerType + " tower for $" + config.cost + 
+                       ". Remaining gold: $" + inventory.getGold());
+    
+    // Create and spawn the tower
     Entity newTower = TowerFactory.createTower(selectedTowerType);
     spawnEntityAt(newTower, location, false, false);
+    
+    // Trigger event to update UI
+    ServiceLocator.getGameAreaEvents().trigger("updateGold");
+    
+    // Exit build mode after placing
+    ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", false);
+    
     return newTower;
 }
 

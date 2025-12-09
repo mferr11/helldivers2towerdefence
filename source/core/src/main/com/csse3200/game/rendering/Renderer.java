@@ -111,6 +111,7 @@ public class Renderer implements Disposable {
 
     stage.act();
     stage.draw();
+    batch.setColor(1, 1, 1, 1);
   }
 
   /**
