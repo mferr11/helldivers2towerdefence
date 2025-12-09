@@ -1,6 +1,7 @@
 package com.csse3200.game.components.towers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
@@ -59,9 +60,13 @@ public class TowerPreviewComponent extends Component {
 
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
 
-            if (Gdx.input.justTouched() && buildModeEnabled && cursorInBounds) {
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && buildModeEnabled && cursorInBounds) {
                 GridPoint2 location = new GridPoint2((int) worldClickPos.x, (int) worldClickPos.y);
                 ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
+            }
+
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && buildModeEnabled) {
+                ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", false);
             }
         }      
     }
