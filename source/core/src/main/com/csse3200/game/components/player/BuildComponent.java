@@ -11,7 +11,6 @@ public class BuildComponent extends Component {
 
     public void setBuildMode(Boolean newBuildMode) {
         this.inBuildMode = newBuildMode;
-        System.out.println("New Build Mode: " + newBuildMode);
     }
 
     public Boolean getBuildMode() {

@@ -30,7 +30,7 @@ public class EnemyFactory {
     private static int DEFAULT_DAMAGE = 10;
     private static float DEFAULT_SPEED = 2f;
     private static int DEFAULT_ARMOUR_RATING = 0;
-    private static int DEFAULT_GOLD_AMOUNT = 25;
+    private static int DEFAULT_GOLD_AMOUNT = 250;
 
     // Misc
     private static float DEFAULT_CLICK_RADIUS = 0.7f;

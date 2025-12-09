@@ -80,16 +80,14 @@ public class PlayerStatsDisplay extends UIComponent {
    */
   public void updatePlayerGoldUI() {
     int gold = entity.getComponent(InventoryComponent.class).getGold();
-    CharSequence text = String.format("Gold: $%d", gold);
+    CharSequence text = String.format("Requisition Slips: $%d", gold);
     goldLabel.setText(text);
   }
 
   @Override
   public void dispose() {
     super.dispose();
-    heartImage.remove();
     healthLabel.remove();
-    goldImage.remove();
     goldLabel.remove();
   }
 }

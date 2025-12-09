@@ -2,30 +2,30 @@
   "towers": {
     "machinegun": {
       "health": 50,
-      "baseAttack": 1,
-      "baseArmourRating": 1,
+      "baseAttack": 2,
+      "baseArmourRating": 0,
       "attackRadius": 3.0,
       "attackCooldown": 0.1,
       "texturePath": "images/tree.png",
-      "cost": 50
+      "cost": 1500
     },
     "railgun": {
       "health": 50,
-      "baseAttack": 15,
-      "baseArmourRating": 2,
-      "attackRadius": 6.0,
-      "attackCooldown": 2.0,
+      "baseAttack": 20,
+      "baseArmourRating": 1,
+      "attackRadius": 3.0,
+      "attackCooldown": 2,
       "texturePath": "images/tree.png",
-      "cost": 200
+      "cost": 4000
     },
     "rocket": {
       "health": 50,
       "baseAttack": 5,
-      "baseArmourRating": 3,
+      "baseArmourRating": 2,
       "attackRadius": 4.0,
       "attackCooldown": 1.0,
       "texturePath": "images/tree.png",
-      "cost": 250
+      "cost": 7500
     }
   }
 }

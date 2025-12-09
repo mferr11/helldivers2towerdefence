@@ -87,8 +87,10 @@ public class deckUI extends UIComponent {
                 
                 // Change button color when disabled
                 if (button.isDisabled()) {
+                    button.getLabel().setColor(0.5f, 0.5f, 0.5f, 1f);
                     button.setColor(0.5f, 0.5f, 0.5f, 1f); // Gray out
                 } else {
+                    button.getLabel().setColor(1f, 1f, 1f, 1f);
                     button.setColor(1f, 1f, 1f, 1f); // Normal color
                     canAffordAny = true;
                 }
