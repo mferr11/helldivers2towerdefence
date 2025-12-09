@@ -26,6 +26,8 @@ public class deckUI extends UIComponent {
     private void addActors() {
         table = new Table();
         table.setFillParent(true);
+        table.bottom();
+
         TextButton buildButton = new TextButton("Build Mode", skin);
 
         buildButton.addListener(
@@ -36,7 +38,7 @@ public class deckUI extends UIComponent {
           }
         });
 
-        table.add(buildButton);
+        table.add(buildButton).padBottom(10);
 
         stage.addActor(table);
     }
