@@ -87,7 +87,7 @@ public class ForestGameArea extends GameArea {
     towerPlacementList.clear();
     ServiceLocator.registerGameAreaEvents(this.getEvents());
 
-    this.getEvents().addListener("enemyKilled", this::checkEnemyKills);
+    this.getEvents().addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
     this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
 
     ServiceLocator.getGameAreaEvents().addListener("selectTowerType", (EventListener1<TowerType>) this::setSelectedTowerType);
@@ -164,9 +164,14 @@ public class ForestGameArea extends GameArea {
     }, 0, currentWave.getSpawnRate());  // Start immediately (0 delay), repeat every spawnRate seconds
   }
 
-  public void checkEnemyKills() {
+  public void checkEnemyKills(int gold) {
     waveEnemiesKilled++;
     System.out.println(waveEnemiesKilled);
+    InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
+    inventory.addGold(gold);
+
+    ServiceLocator.getGameAreaEvents().trigger("updateGold");
+
     if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
       System.out.println("Victory!");
     }

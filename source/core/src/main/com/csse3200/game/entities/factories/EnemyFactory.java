@@ -30,6 +30,7 @@ public class EnemyFactory {
     private static int DEFAULT_DAMAGE = 10;
     private static float DEFAULT_SPEED = 2f;
     private static int DEFAULT_ARMOUR_RATING = 0;
+    private static int DEFAULT_GOLD_AMOUNT = 25;
 
     // Misc
     private static float DEFAULT_CLICK_RADIUS = 0.7f;
@@ -64,7 +65,6 @@ public class EnemyFactory {
             .addComponent(aiComponent)
             // TextureRenderComponent is placeholder until I implement animations
             .addComponent(new TextureRenderComponent(DEFAULT_TEXTURE_PATH));
-            // .addComponent(animations);
 
         baseEnemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(new Vector2(DEFAULT_SPEED, DEFAULT_SPEED));
 
@@ -105,7 +105,7 @@ public class EnemyFactory {
      * @param enemy The enemy entity to destroy
      */
     private static void destroyEnemy(Entity enemy) {
-        ServiceLocator.getGameAreaEvents().trigger("enemyKilled");
+        ServiceLocator.getGameAreaEvents().trigger("enemyKilled", DEFAULT_GOLD_AMOUNT);
 
         Gdx.app.postRunnable(() -> {
             enemy.dispose();
