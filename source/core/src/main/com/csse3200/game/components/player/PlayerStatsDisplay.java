@@ -38,11 +38,6 @@ public class PlayerStatsDisplay extends UIComponent {
     table.setFillParent(true);
     table.padTop(45f).padLeft(5f);
 
-    // Heart image
-    float heartSideLength = 30f;
-    heartImage =
-        new Image(ServiceLocator.getResourceService().getAsset("images/heart.png", Texture.class));
-
     // Health text
     int health = entity.getComponent(CombatStatsComponent.class).getHealth();
     CharSequence healthText = String.format("Health: %d", health);
@@ -50,18 +45,17 @@ public class PlayerStatsDisplay extends UIComponent {
 
     // Gold text
     int gold = entity.getComponent(InventoryComponent.class).getGold();
-    CharSequence goldText = String.format("Gold: $%d", gold);
+    CharSequence goldText = String.format("Requisition Slips: $%d", gold);
     goldLabel = new Label(goldText, skin, "large");
 
     // Add health row
-    table.add(heartImage).size(heartSideLength).pad(5).left();
-    table.add(healthLabel).left();
+    table.add(healthLabel).left().padLeft(10);
     
     // Move to new row for gold
     table.row();
     
     // Add gold row
-    table.add(goldLabel).colspan(2).left().padLeft(40);
+    table.add(goldLabel).left().padLeft(10);
     
     stage.addActor(table);
 }
