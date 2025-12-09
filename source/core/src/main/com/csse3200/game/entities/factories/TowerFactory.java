@@ -17,7 +17,8 @@ public class TowerFactory {
     
     public enum TowerType {
         MACHINEGUN("machinegun"),
-        RAILGUN("railgun");
+        RAILGUN("railgun"),
+        ROCKET("rocket");
         
         private final String configKey;
         
@@ -85,5 +86,17 @@ public class TowerFactory {
             .addComponent(new TextureRenderComponentAlpha(config.texturePath, PREVIEW_OPACITY));
 
         return towerPreview;
+    }
+
+    /**
+     * Get the config for a specific tower type
+     */
+    public static TowerConfig getConfig(TowerType type) {
+        TowerConfig config = configs.towers.get(type.getConfigKey());
+        if (config == null) {
+            System.err.println("Failed to load tower config for: " + type.getConfigKey());
+            return new TowerConfig();
+        }
+        return config;
     }
 }

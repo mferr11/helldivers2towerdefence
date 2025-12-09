@@ -5,8 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.csse3200.game.components.player.BuildComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.factories.TowerFactory;
+import com.csse3200.game.entities.factories.TowerFactory.TowerType;
 import com.csse3200.game.services.ServiceLocator;
 
 public class deckUI extends UIComponent {
@@ -28,19 +29,40 @@ public class deckUI extends UIComponent {
         table.setFillParent(true);
         table.bottom();
 
-        TextButton buildButton = new TextButton("Build Mode", skin);
-
-        buildButton.addListener(
-                    new ChangeListener() {
-          @Override
-          public void changed(ChangeEvent changeEvent, Actor actor) {
-            ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", !(playerRef.getComponent(BuildComponent.class).getBuildMode()));
-          }
-        });
-
-        table.add(buildButton).padBottom(10);
+        // Create a button for each tower type
+        for (TowerType towerType : TowerType.values()) {
+            TextButton towerButton = new TextButton(getTowerDisplayName(towerType), skin);
+            
+            towerButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent changeEvent, Actor actor) {
+                    // Select this tower type
+                    ServiceLocator.getGameAreaEvents().trigger("selectTowerType", towerType);
+                    // Enter build mode
+                    ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", true);
+                }
+            });
+            
+            table.add(towerButton).padBottom(10).padRight(5);
+        }
 
         stage.addActor(table);
+    }
+    
+    /**
+     * Get a display-friendly name for the tower type
+     */
+    private String getTowerDisplayName(TowerType type) {
+        switch (type) {
+            case MACHINEGUN:
+                return "Machine Gun Sentry";
+            case RAILGUN:
+                return "Railgun Sentry";
+            case ROCKET:
+                return "Rocket Sentry";
+            default:
+                return type.name();
+        }
     }
 
     @Override
@@ -53,5 +75,4 @@ public class deckUI extends UIComponent {
         table.clear();
         super.dispose();
     }
-
 }

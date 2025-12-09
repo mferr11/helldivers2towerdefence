@@ -40,6 +40,7 @@ public class ForestGameArea extends GameArea {
   private static java.util.List<GridPoint2> waypointsGridPointList = new java.util.ArrayList<>();
 
   private static java.util.List<GridPoint2> towerPlacementList = new java.util.ArrayList<>();
+  private TowerType selectedTowerType = TowerType.MACHINEGUN;
 
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
@@ -87,6 +88,8 @@ public class ForestGameArea extends GameArea {
     this.getEvents().addListener("enemyKilled", this::checkEnemyKills);
     this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
 
+    ServiceLocator.getGameAreaEvents().addListener("selectTowerType", (EventListener1<TowerType>) this::setSelectedTowerType);
+
     loadAssets();
 
     initialiseWaypoints();
@@ -105,6 +108,14 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
 
     //playMusic();
+  }
+
+  private void setSelectedTowerType(TowerType towerType) {
+      this.selectedTowerType = towerType;
+      System.out.println("Selected tower type: " + towerType);
+      
+      // Update the preview to show the selected tower
+      ServiceLocator.getGameAreaEvents().trigger("updateTowerPreview", towerType);
   }
 
   private void tryTowerPlacement(GridPoint2 location) {
@@ -219,11 +230,11 @@ public class ForestGameArea extends GameArea {
     return newPlayer;
   }
 
-  private Entity spawnTower(GridPoint2 location) {
-    Entity newTower = TowerFactory.createTower(TowerType.MACHINEGUN);
+private Entity spawnTower(GridPoint2 location) {
+    Entity newTower = TowerFactory.createTower(selectedTowerType);
     spawnEntityAt(newTower, location, false, false);
     return newTower;
-  }
+}
 
   private void spawnEnemy() {
     GridPoint2 spawnPos = new GridPoint2(-5, 5);

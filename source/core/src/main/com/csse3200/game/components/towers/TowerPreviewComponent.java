@@ -7,6 +7,9 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.entities.configs.TowerConfig;
+import com.csse3200.game.entities.factories.TowerFactory;
+import com.csse3200.game.entities.factories.TowerFactory.TowerType;
 import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.rendering.TextureRenderComponentAlpha;
@@ -27,6 +30,16 @@ public class TowerPreviewComponent extends Component {
                 buildModeEnabled = newBuildMode;
                 updateVisibility();
             });
+
+        ServiceLocator.getGameAreaEvents().addListener("updateTowerPreview", (EventListener1<TowerType>) this::updatePreviewTexture);
+    }
+
+    private void updatePreviewTexture(TowerType towerType) {
+        // Get the config for the new tower type
+        TowerConfig config = TowerFactory.getConfig(towerType);
+        if (config != null && alphaComp != null) {
+            alphaComp.setTexture(config.texturePath);
+        }
     }
 
     private void updateVisibility() {
@@ -63,6 +76,7 @@ public class TowerPreviewComponent extends Component {
             if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && buildModeEnabled && cursorInBounds) {
                 GridPoint2 location = new GridPoint2((int) worldClickPos.x, (int) worldClickPos.y);
                 ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
+                ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", false);
             }
 
             if (Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT) && buildModeEnabled) {

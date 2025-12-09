@@ -7,7 +7,7 @@ import com.csse3200.game.services.ServiceLocator;
 
 /** Render a static texture. */
 public class TextureRenderComponentAlpha extends RenderComponent {
-  private final Texture texture;
+  private Texture texture;
   private float alphaValue;
 
   /**
@@ -34,6 +34,22 @@ public class TextureRenderComponentAlpha extends RenderComponent {
 
   public void setAlphaValue(float value) {
     alphaValue = value;
+  }
+
+  /**
+   * Set a new texture to render
+   * @param texturePath Internal path of texture to render
+   */
+  public void setTexture(String texturePath) {
+    this.texture = ServiceLocator.getResourceService().getAsset(texturePath, Texture.class);
+  }
+
+  /**
+   * Set a new texture to render
+   * @param texture Texture to render
+   */
+  public void setTexture(Texture texture) {
+    this.texture = texture;
   }
 
   @Override
