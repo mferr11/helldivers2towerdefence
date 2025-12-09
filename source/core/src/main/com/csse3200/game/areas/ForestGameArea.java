@@ -187,6 +187,25 @@ public class ForestGameArea extends GameArea {
       waypointEntity.setPosition(wp.x, wp.y);
       waypointEntityList.add(waypointEntity);
     }
+
+    // Add the path to list of tiles where towers cannot be placed
+    for (int i = 0; i <waypointsGridPointList.size() - 1; i++) {
+        GridPoint2 start = waypointsGridPointList.get(i);
+        GridPoint2 end = waypointsGridPointList.get(i + 1);
+        
+        int dx = Integer.signum(end.x - start.x);
+        int dy = Integer.signum(end.y - start.y);
+        
+        int x = start.x;
+        int y = start.y;
+        
+        while (x != end.x || y != end.y) {
+            towerPlacementList.add(new GridPoint2(x, y));
+            x += dx;
+            y += dy;
+        }
+    }
+    towerPlacementList.add(waypointsGridPointList.get(waypointsGridPointList.size() - 1));
   }
 
   public List<Entity> getWaypointEntityList() {
