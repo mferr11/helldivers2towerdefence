@@ -14,6 +14,7 @@ import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.deckUI;
 import com.badlogic.gdx.utils.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,8 @@ import java.util.List;
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
   private static String levelName = "Test Level";
+
+  private Entity playerRef;
 
   private List<Wave> waves;
   private Timer.Task spawnTask;
@@ -46,6 +49,7 @@ public class ForestGameArea extends GameArea {
     "images/grass_2.png",
     "images/grass_3.png",
     "images/tree.png",
+    "images/box_boy_leaf.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -87,15 +91,15 @@ public class ForestGameArea extends GameArea {
     initialiseWaypoints();
     spawnTerrain(waypointsGridPointList);
 
-    displayUI();
-
     spawnTowerPreview();
 
     initialiseWaves();
     startWaveSpawning();
 
     //spawnTrees();
-    //player = spawnPlayer();
+    this.playerRef = spawnPlayer();
+    displayUI();
+
     //spawnGhosts();
     //spawnGhostKing();
 
@@ -157,6 +161,7 @@ public class ForestGameArea extends GameArea {
   private void displayUI() {
     Entity ui = new Entity();
     ui.addComponent(new GameAreaDisplay(levelName));
+    ui.addComponent(new deckUI(playerRef));
     spawnEntity(ui);
   }
 

@@ -6,31 +6,34 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 import com.csse3200.game.services.ServiceLocator;
 
 public class TowerPreviewComponent extends Component {
-    private Boolean shouldBeVisible = true;
+    private boolean buildModeEnabled = false;
+    private boolean cursorInBounds = true;
     private TextureRenderComponentAlpha alphaComp;
 
     @Override
     public void create() {
         super.create();
         alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
-        setVisibility(false);
+        updateVisibility();
+        ServiceLocator.getGameAreaEvents().addListener("updateBuildMode", 
+            (EventListener1<Boolean>) (newBuildMode) -> {
+                buildModeEnabled = newBuildMode;
+                updateVisibility();
+            });
     }
 
-    public void setVisibility(boolean newVisibility) {
-        if (shouldBeVisible) {
-            if (newVisibility) {
-                alphaComp.setAlphaValue(0.5f);
-            } else {
-                alphaComp.setAlphaValue(0);
-            }
+    private void updateVisibility() {
+        // Only show preview if build mode is enabled AND cursor is in bounds
+        if (buildModeEnabled && cursorInBounds) {
+            alphaComp.setAlphaValue(0.5f);
         } else {
             alphaComp.setAlphaValue(0);
-            return;
         }
     }
     
@@ -44,22 +47,21 @@ public class TowerPreviewComponent extends Component {
             // Convert screen coordinates to world coordinates
             Vector3 worldClickPos = new Vector3(screenX, screenY, 0);
             camera.unproject(worldClickPos);
-            if (worldClickPos.y < 0) {
-                setVisibility(false);
-            } else {
-                setVisibility(true);
+            
+            // Update cursor bounds state
+            boolean wasInBounds = cursorInBounds;
+            cursorInBounds = worldClickPos.y >= 0;
+            
+            // Only update visibility if bounds state changed
+            if (wasInBounds != cursorInBounds) {
+                updateVisibility();
             }
 
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
 
-            if (Gdx.input.justTouched()) {
+            if (Gdx.input.justTouched() && buildModeEnabled && cursorInBounds) {
                 GridPoint2 location = new GridPoint2((int) worldClickPos.x, (int) worldClickPos.y);
-                if (worldClickPos.y < 0) {
-                    System.out.println("Tower placement out of bounds");
-                    return;
-                } else {
-                    ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
-                }
+                ServiceLocator.getGameAreaEvents().trigger("towerPlacementClick", location);
             }
         }      
     }

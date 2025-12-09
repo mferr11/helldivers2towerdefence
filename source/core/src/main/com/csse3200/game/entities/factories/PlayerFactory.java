@@ -1,11 +1,13 @@
 package com.csse3200.game.entities.factories;
 
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.player.BuildComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.components.player.PlayerStatsDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.PlayerConfig;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -45,12 +47,20 @@ public class PlayerFactory {
             .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack, stats.baseArmourRating))
             .addComponent(new InventoryComponent(stats.gold))
             .addComponent(inputComponent)
+            .addComponent(new BuildComponent(false))
             .addComponent(new PlayerStatsDisplay());
 
     PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();
+
+    ServiceLocator.getGameAreaEvents().addListener("updateBuildMode", (EventListener1<Boolean>) (newBuildMode) -> updateBuildMode(player, newBuildMode));
+
     return player;
+  }
+
+  private static void updateBuildMode(Entity playerRef, Boolean newBuild) {
+    playerRef.getComponent(BuildComponent.class).setBuildMode(newBuild);
   }
 
   private PlayerFactory() {
