@@ -35,7 +35,6 @@ public class TowerActionsUI extends UIComponent {
         // Listen for tower clicks
         ServiceLocator.getGameAreaEvents().addListener("towerClicked", 
             (EventListener1<Entity>) this::showTowerActions);
-        //ServiceLocator.getGameAreaEvents().addListener("missClick", this::hideUI);
     }
 
     private void addActors() {

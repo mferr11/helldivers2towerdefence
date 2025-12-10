@@ -45,6 +45,7 @@ public class deckUI extends UIComponent {
             towerButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent changeEvent, Actor actor) {
+                    ServiceLocator.getGameAreaEvents().trigger("deselectTower");
                     // Check if player can afford this tower
                     InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
                     if (inventory.hasGold(config.cost)) {

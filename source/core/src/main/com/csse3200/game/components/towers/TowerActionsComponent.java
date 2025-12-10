@@ -53,6 +53,8 @@ public class TowerActionsComponent extends Component {
                     towerClickedThisFrame = true;
                     // Tower was clicked - trigger event with this tower entity
                     ServiceLocator.getGameAreaEvents().trigger("towerClicked", entity);
+                } else {
+                    ServiceLocator.getGameAreaEvents().trigger("deselectTower");
                 }
             }
         }      
