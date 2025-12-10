@@ -2,6 +2,7 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -17,6 +18,7 @@ import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.entities.factories.TowerFactory.TowerType;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.TowerActionsUI;
 import com.csse3200.game.ui.deckUI;
 import com.badlogic.gdx.utils.Timer;
 import org.slf4j.Logger;
@@ -86,9 +88,11 @@ public class ForestGameArea extends GameArea {
   public void create() {
     towerPlacementList.clear();
     ServiceLocator.registerGameAreaEvents(this.getEvents());
+    ServiceLocator.getGameAreaEvents().addListener("sellTower", (EventListener1<Entity>) this::removeTower);
 
     this.getEvents().addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
     this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
+    
 
     ServiceLocator.getGameAreaEvents().addListener("selectTowerType", (EventListener1<TowerType>) this::setSelectedTowerType);
 
@@ -110,6 +114,14 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
 
     //playMusic();
+  }
+
+  private void removeTower(Entity tower) {
+    Vector2 vecpos = tower.getPosition();
+    GridPoint2 gridpos = new GridPoint2((int) vecpos.x, (int) vecpos.y);
+
+    towerPlacementList.remove(gridpos);
+    tower.dispose();
   }
 
   private void setSelectedTowerType(TowerType towerType) {
@@ -181,6 +193,7 @@ public class ForestGameArea extends GameArea {
     Entity ui = new Entity();
     ui.addComponent(new GameAreaDisplay(levelName));
     ui.addComponent(new deckUI(playerRef));
+    ui.addComponent(new TowerActionsUI(playerRef));
     spawnEntity(ui);
   }
 
@@ -200,6 +213,9 @@ public class ForestGameArea extends GameArea {
     waypointsGridPointList.add(new GridPoint2(7, 2));
     waypointsGridPointList.add(new GridPoint2(7, 5));
     waypointsGridPointList.add(new GridPoint2(10, 5));
+    waypointsGridPointList.add(new GridPoint2(10, 7));
+    waypointsGridPointList.add(new GridPoint2(14, 7));
+    waypointsGridPointList.add(new GridPoint2(14, 2));
 
     for (GridPoint2 wp : waypointsGridPointList) {
       Entity waypointEntity = new Entity();

@@ -39,7 +39,7 @@ public class EnemyClickableComponent extends Component{
                 camera.unproject(worldClickPos);
 
                 // Check if click is close to enemy
-                if (Math.abs(worldClickPos.x - (entityPos.x + clickRadius/2)) < clickRadius &&
+                if (Math.abs(worldClickPos.x - (entityPos.x + clickRadius)) < clickRadius &&
                     Math.abs(worldClickPos.y - (entityPos.y + clickRadius)) < clickRadius) {
                     entity.getComponent(CombatStatsComponent.class).hit(mockCombatStat);
                 }

@@ -1,8 +1,10 @@
 package com.csse3200.game.entities.factories;
 
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.towers.TowerActionsComponent;
 import com.csse3200.game.components.towers.TowerAttackComponent;
 import com.csse3200.game.components.towers.TowerPreviewComponent;
+import com.csse3200.game.components.towers.TowerStatsComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.TowerConfig;
 import com.csse3200.game.entities.configs.TowerConfigs;
@@ -44,7 +46,7 @@ public class TowerFactory {
             config = new TowerConfig(); // Use defaults
         }
         
-        return createTower(config);
+        return createTower(config, type);
     }
     
     /**
@@ -52,7 +54,7 @@ public class TowerFactory {
      * @param config The tower configuration
      * @return The tower entity
      */
-    private static Entity createTower(TowerConfig config) {
+    private static Entity createTower(TowerConfig config, TowerType type) {
         CombatStatsComponent combatStats = new CombatStatsComponent(
             config.health, 
             config.baseAttack, 
@@ -65,7 +67,9 @@ public class TowerFactory {
                 config.attackRadius, 
                 config.attackCooldown, 
                 combatStats
-            ));
+            ))
+            .addComponent(new TowerActionsComponent())
+            .addComponent(new TowerStatsComponent(type, config.cost));
 
         return tower;
     }
