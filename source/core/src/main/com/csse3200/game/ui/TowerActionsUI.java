@@ -79,6 +79,7 @@ public class TowerActionsUI extends UIComponent {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 hideUI();
+                ServiceLocator.getGameAreaEvents().trigger("deselectTower");
             }
         });
         actionsTable.add(closeButton).colspan(2).padTop(5).width(350);

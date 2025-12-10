@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.towers.RadiusDisplayComponent;
 import com.csse3200.game.components.towers.TowerActionsComponent;
 import com.csse3200.game.components.towers.TowerAttackComponent;
 import com.csse3200.game.components.towers.TowerPreviewComponent;
@@ -69,6 +70,7 @@ public class TowerFactory {
                 combatStats
             ))
             .addComponent(new TowerActionsComponent())
+            .addComponent(new RadiusDisplayComponent(config.attackRadius, false))
             .addComponent(new TowerStatsComponent(type, config.cost));
 
         return tower;
@@ -87,7 +89,8 @@ public class TowerFactory {
         
         Entity towerPreview = new Entity()
             .addComponent(new TowerPreviewComponent())
-            .addComponent(new TextureRenderComponentAlpha(config.texturePath, PREVIEW_OPACITY));
+            .addComponent(new TextureRenderComponentAlpha(config.texturePath, PREVIEW_OPACITY))
+            .addComponent(new RadiusDisplayComponent(config.attackRadius));
 
         return towerPreview;
     }

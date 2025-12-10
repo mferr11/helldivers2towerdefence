@@ -4,7 +4,7 @@
       "health": 50,
       "baseAttack": 2,
       "baseArmourRating": 0,
-      "attackRadius": 3.0,
+      "attackRadius": 2.0,
       "attackCooldown": 0.1,
       "texturePath": "images/tree.png",
       "cost": 1500
@@ -13,17 +13,17 @@
       "health": 50,
       "baseAttack": 20,
       "baseArmourRating": 1,
-      "attackRadius": 3.0,
+      "attackRadius": 6.0,
       "attackCooldown": 2,
       "texturePath": "images/tree.png",
       "cost": 4000
     },
     "rocket": {
       "health": 50,
-      "baseAttack": 5,
+      "baseAttack": 15,
       "baseArmourRating": 2,
-      "attackRadius": 4.0,
-      "attackCooldown": 1.0,
+      "attackRadius": 3.0,
+      "attackCooldown": 0.75,
       "texturePath": "images/tree.png",
       "cost": 7500
     }

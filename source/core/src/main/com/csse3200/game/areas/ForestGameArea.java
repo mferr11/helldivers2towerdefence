@@ -142,7 +142,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnTowerPreview() {
-    Entity towerPreview = TowerFactory.createTowerPreview(TowerType.MACHINEGUN);
+    Entity towerPreview = TowerFactory.createTowerPreview(this.selectedTowerType);
     spawnEntity(towerPreview);
   }
 

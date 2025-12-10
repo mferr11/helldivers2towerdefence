@@ -19,11 +19,13 @@ public class TowerPreviewComponent extends Component {
     private boolean buildModeEnabled = false;
     private boolean cursorInBounds = true;
     private TextureRenderComponentAlpha alphaComp;
+    private RadiusDisplayComponent radiusDisplay;
 
     @Override
     public void create() {
         super.create();
         alphaComp = entity.getComponent(TextureRenderComponentAlpha.class);
+        radiusDisplay = entity.getComponent(RadiusDisplayComponent.class);
         updateVisibility();
         ServiceLocator.getGameAreaEvents().addListener("updateBuildMode", 
             (EventListener1<Boolean>) (newBuildMode) -> {
@@ -45,7 +47,7 @@ public class TowerPreviewComponent extends Component {
     private void updateVisibility() {
         // Only show preview if build mode is enabled AND cursor is in bounds
         if (buildModeEnabled && cursorInBounds) {
-            alphaComp.setAlphaValue(0.5f);
+            alphaComp.setAlphaValue(0.2f);
         } else {
             alphaComp.setAlphaValue(0);
         }
@@ -69,6 +71,9 @@ public class TowerPreviewComponent extends Component {
             // Only update visibility if bounds state changed
             if (wasInBounds != cursorInBounds) {
                 updateVisibility();
+                if (radiusDisplay != null) {
+                    radiusDisplay.updateCursorBounds(cursorInBounds);
+                }
             }
 
             entity.setPosition((int) worldClickPos.x, (int) worldClickPos.y);
