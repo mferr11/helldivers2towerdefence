@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.towers.DeselectHandlerComponent;
@@ -90,6 +91,7 @@ public class ForestGameArea extends GameArea {
     towerPlacementList.clear();
     ServiceLocator.registerGameAreaEvents(this.getEvents());
     ServiceLocator.getGameAreaEvents().addListener("sellTower", (EventListener1<Entity>) this::removeTower);
+    ServiceLocator.getGameAreaEvents().addListener("enemyreachedbase", (EventListener1<Integer>) this::damagebase);
 
     this.getEvents().addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
     this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
@@ -115,6 +117,14 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
 
     //playMusic();
+  }
+
+  private void damagebase(Integer damage) {
+    playerRef.getComponent(CombatStatsComponent.class).addHealth(damage * -1);
+
+    if (playerRef.getComponent(CombatStatsComponent.class).getHealth() <= 0) {
+      System.out.println("GAME OVER!");
+    }
   }
 
   private void removeTower(Entity tower) {
@@ -218,6 +228,7 @@ public class ForestGameArea extends GameArea {
     waypointsGridPointList.add(new GridPoint2(10, 7));
     waypointsGridPointList.add(new GridPoint2(14, 7));
     waypointsGridPointList.add(new GridPoint2(14, 2));
+    waypointsGridPointList.add(new GridPoint2(20, 2));
 
     for (GridPoint2 wp : waypointsGridPointList) {
       Entity waypointEntity = new Entity();

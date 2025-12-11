@@ -92,7 +92,7 @@ public class EnemyFactory {
         } else {
             if (!tracker.getFinished()) {
                 // Reached the end of the waypoint list, do stuff once here
-                System.out.println("Reached end of waypoint list!");
+                ServiceLocator.getGameAreaEvents().trigger("enemyreachedbase", DEFAULT_DAMAGE);
                 tracker.setFinished(true); 
             }
         }
