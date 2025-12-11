@@ -49,12 +49,8 @@ public class TowerActionsComponent extends Component {
                 float distance = (float) Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < clickRadius) {
-                    System.out.println("Tower clicked!");
                     towerClickedThisFrame = true;
-                    // Tower was clicked - trigger event with this tower entity
                     ServiceLocator.getGameAreaEvents().trigger("towerClicked", entity);
-                } else {
-                    ServiceLocator.getGameAreaEvents().trigger("deselectTower");
                 }
             }
         }      

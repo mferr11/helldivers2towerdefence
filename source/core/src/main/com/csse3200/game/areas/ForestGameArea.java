@@ -7,6 +7,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.towers.DeselectHandlerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.TowerConfig;
 import com.csse3200.game.events.EventHandler;
@@ -194,6 +195,7 @@ public class ForestGameArea extends GameArea {
     ui.addComponent(new GameAreaDisplay(levelName));
     ui.addComponent(new deckUI(playerRef));
     ui.addComponent(new TowerActionsUI(playerRef));
+    ui.addComponent(new DeselectHandlerComponent());
     spawnEntity(ui);
   }
 
@@ -253,7 +255,7 @@ public class ForestGameArea extends GameArea {
     return newPlayer;
   }
 
-private Entity spawnTower(GridPoint2 location) {
+  private Entity spawnTower(GridPoint2 location) {
     // Get the cost of the selected tower
     TowerConfig config = TowerFactory.getConfig(selectedTowerType);
     InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
@@ -280,7 +282,7 @@ private Entity spawnTower(GridPoint2 location) {
     ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", false);
     
     return newTower;
-}
+  }
 
   private void spawnEnemy() {
     GridPoint2 spawnPos = new GridPoint2(-5, 5);

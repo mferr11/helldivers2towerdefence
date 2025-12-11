@@ -1,6 +1,7 @@
 package com.csse3200.game.ui;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -23,8 +24,21 @@ public class TowerActionsUI extends UIComponent {
     private TextButton sellButton;
     private TextButton closeButton;
 
+    private static TowerActionsUI instance;
+
     public TowerActionsUI(Entity player) {
         this.playerRef = player;
+        instance = this;
+    }
+
+    public static boolean isClickOnUI(int screenX, int screenY) {
+        if (instance == null || !instance.table.isVisible()) {
+            return false;
+        }
+        
+        Vector2 stageCoords = instance.stage.screenToStageCoordinates(new Vector2(screenX, screenY));
+        Actor hit = instance.stage.hit(stageCoords.x, stageCoords.y, true);
+        return hit != null && hit.isDescendantOf(instance.table);
     }
 
     @Override
@@ -35,6 +49,14 @@ public class TowerActionsUI extends UIComponent {
         // Listen for tower clicks
         ServiceLocator.getGameAreaEvents().addListener("towerClicked", 
             (EventListener1<Entity>) this::showTowerActions);
+
+        ServiceLocator.getGameAreaEvents().addListener("deselectTower", this::hideTowerActions);
+    }
+
+    private void hideTowerActions() {
+        if (table.isVisible()) {
+            hideUI();
+        }
     }
 
     private void addActors() {

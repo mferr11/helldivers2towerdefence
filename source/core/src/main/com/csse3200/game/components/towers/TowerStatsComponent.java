@@ -33,7 +33,7 @@ public class TowerStatsComponent extends Component {
      * Calculate sell value (50% of purchase cost + upgrades)
      */
     public int getSellValue() {
-        return purchaseCost / 2;
+        return (purchaseCost / 2) + (purchaseCost * (upgradeLevel - 1) / 4);
     }
     
     /**
