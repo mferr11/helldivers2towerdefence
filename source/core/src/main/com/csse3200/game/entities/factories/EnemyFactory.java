@@ -14,7 +14,6 @@ import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
-//import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -120,9 +119,9 @@ public class EnemyFactory {
      * @param newHealth The enemy's health after taking damage
      */
     private static void takeDamage(Entity enemy, int newHealth) {
-        //System.out.println("New Health: " + newHealth);
         if (newHealth <= 0) {
             destroyEnemy(enemy);
+            return;
         }
     }
 

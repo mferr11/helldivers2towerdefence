@@ -15,7 +15,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.csse3200.game.areas.terrain.TerrainComponent.TerrainOrientation;
 import com.csse3200.game.components.CameraComponent;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.RandomUtils;

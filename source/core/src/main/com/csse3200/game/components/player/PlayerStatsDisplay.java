@@ -1,8 +1,6 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -12,9 +10,7 @@ import com.csse3200.game.ui.UIComponent;
 /** A ui component for displaying player stats, e.g. health. */
 public class PlayerStatsDisplay extends UIComponent {
   Table table;
-  private Image heartImage;
   private Label healthLabel;
-  private Image goldImage;
   private Label goldLabel;
 
   /** Creates reusable ui styles and adds actors to the stage. */

@@ -109,14 +109,9 @@ public class ForestGameArea extends GameArea {
     initialiseWaves();
     startWaveSpawning();
 
-    //spawnTrees();
     this.playerRef = spawnPlayer();
     displayUI();
 
-    //spawnGhosts();
-    //spawnGhostKing();
-
-    //playMusic();
   }
 
   private void damagebase(Integer damage) {
@@ -301,12 +296,12 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(enemy, spawnPos, true, true);
   }
 
-  private void playMusic() {
-    Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
-    music.setLooping(true);
-    music.setVolume(0.3f);
-    music.play();
-  }
+  // private void playMusic() {
+  //   Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+  //   music.setLooping(true);
+  //   music.setVolume(0.3f);
+  //   music.play();
+  // }
 
   private void loadAssets() {
     logger.debug("Loading assets");
