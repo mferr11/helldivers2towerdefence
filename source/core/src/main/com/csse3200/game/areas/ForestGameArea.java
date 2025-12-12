@@ -39,6 +39,7 @@ public class ForestGameArea extends GameArea {
   private Timer.Task spawnTask;
   private int waveEnemiesKilled = 0;
   private Wave currentWave;
+  private int currentWaveIndex = 0;
 
   private final EventHandler events;
 
@@ -155,44 +156,90 @@ public class ForestGameArea extends GameArea {
   private void initialiseWaves() {
     waves = new ArrayList<>();
 
-    waves.add(new Wave(0, false, 5, 1f, waypointEntityList));
+    waves.add(new Wave(1, false, 5, 1f, waypointEntityList));
+    waves.add(new Wave(2, false, 10, 0.75f, waypointEntityList));
   }
 
   private void startWaveSpawning() {
-    currentWave = waves.get(0);
-    final int[] enemiesSpawned = {0};
-      
-    spawnTask = Timer.schedule(new Timer.Task() {
-        @Override
-        public void run() {
-          // Safety check before doing anything
-          if (ServiceLocator.getPhysicsService() == null) {
-              this.cancel();
-              return;
+      currentWaveIndex = 0;
+      currentWave = waves.get(currentWaveIndex);
+      final int[] enemiesSpawned = {0};
+        
+      spawnTask = Timer.schedule(new Timer.Task() {
+          @Override
+          public void run() {
+            // Safety check before doing anything
+            if (ServiceLocator.getPhysicsService() == null) {
+                this.cancel();
+                return;
+            }
+            if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
+                spawnEnemy();
+                enemiesSpawned[0]++;
+            } else {
+                // Stop the timer when all enemies are spawned
+                this.cancel();
+                spawnTask = null;
+            }
           }
-          if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
-              spawnEnemy();
-              enemiesSpawned[0]++;
-          } else {
-              // Stop the timer when all enemies are spawned
-              this.cancel();
-              spawnTask = null;
-          }
-        }
-    }, 0, currentWave.getSpawnRate());  // Start immediately (0 delay), repeat every spawnRate seconds
-  }
+      }, 0, currentWave.getSpawnRate());
+    }
 
   public void checkEnemyKills(int gold) {
-    waveEnemiesKilled++;
-    System.out.println(waveEnemiesKilled);
-    InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
-    inventory.addGold(gold);
+      waveEnemiesKilled++;
+      System.out.println(waveEnemiesKilled);
+      InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
+      inventory.addGold(gold);
 
-    ServiceLocator.getGameAreaEvents().trigger("updateGold");
+      ServiceLocator.getGameAreaEvents().trigger("updateGold");
 
-    if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
-      System.out.println("Victory!");
-    }
+      if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
+          // All enemies in current wave are dead
+          if (currentWaveIndex >= waves.size() - 1) {
+              // This is the final wave
+              System.out.println("Victory!");
+          } else {
+              // There are more waves, wait 5 seconds before starting the next one
+              System.out.println("Wave " + (currentWaveIndex + 1) + " complete! Next wave in 5 seconds...");
+              Timer.schedule(new Timer.Task() {
+                  @Override
+                  public void run() {
+                      startNextWave();
+                  }
+              }, 5f); // 5 second delay
+          }
+      }
+  }
+
+  private void startNextWave() {
+      currentWaveIndex++;
+      if (currentWaveIndex < waves.size()) {
+          currentWave = waves.get(currentWaveIndex);
+          waveEnemiesKilled = 0; // Reset the counter for the new wave
+          
+          System.out.println("Starting wave " + (currentWaveIndex + 1) + "!");
+          
+          final int[] enemiesSpawned = {0};
+          
+          spawnTask = Timer.schedule(new Timer.Task() {
+              @Override
+              public void run() {
+                  // Safety check before doing anything
+                  if (ServiceLocator.getPhysicsService() == null) {
+                      this.cancel();
+                      return;
+                  }
+                  if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
+                      spawnEnemy();
+                      enemiesSpawned[0]++;
+                  } else {
+                      // Stop the timer when all enemies are spawned
+                      this.cancel();
+                      spawnTask = null;
+                  }
+              }
+          }, 0, currentWave.getSpawnRate());
+      }
   }
 
   private void displayUI() {
