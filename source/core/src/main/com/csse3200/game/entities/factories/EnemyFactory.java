@@ -10,7 +10,10 @@ import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.EnemyConfig;
+import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.events.listeners.EventListener1;
+import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
@@ -20,27 +23,52 @@ import java.util.List;
 
 /** Factory to create enemy entities with predefined components. */
 public class EnemyFactory {
+  private static final EnemyConfigs configs =
+      FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
 
-  // Combat Stuff
-  private static int DEFUALT_HEALTH = 30;
-  private static int DEFAULT_DAMAGE = 10;
-  private static float DEFAULT_SPEED = 2f;
-  private static int DEFAULT_ARMOUR_RATING = 0;
-  private static int DEFAULT_GOLD_AMOUNT = 250;
+  public enum EnemyType {
+    SCAVENGER("scavenger"),
+    HUNTER("hunter");
 
-  // Misc
-  private static float DEFAULT_CLICK_RADIUS = 0f;
-  private static String DEFAULT_TEXTURE_PATH = "images/ghost_1.png";
+    private final String configKey;
+
+    EnemyType(String configKey) {
+      this.configKey = configKey;
+    }
+
+    public String getConfigKey() {
+      return configKey;
+    }
+  }
 
   /**
-   * Creates a base enemy entity with default components and behavior. The enemy will follow the
+   * Creates an enemy of the specified type with the provided waypoints.
+   *
+   * @param type The type of enemy to create
+   * @param waypoints List of waypoint entities for the enemy to follow
+   * @return A fully configured enemy entity
+   */
+  public static Entity createEnemy(EnemyType type, List<Entity> waypoints) {
+    EnemyConfig config = configs.enemies.get(type.getConfigKey());
+
+    if (config == null) {
+      System.err.println("Failed to load enemy config for: " + type.getConfigKey());
+      config = new EnemyConfig(); // Use defaults
+    }
+
+    return createEnemy(config, waypoints);
+  }
+
+  /**
+   * Creates a base enemy entity from a config with specified waypoints. The enemy will follow the
    * provided waypoints in order, and can be clicked to take damage. When the enemy's health reaches
    * zero, it will be destroyed.
    *
+   * @param config The enemy configuration
    * @param waypoints List of waypoint entities for the enemy to follow in sequence
    * @return A fully configured enemy entity with physics, combat stats, AI, and event listeners
    */
-  public static Entity createBaseEnemy(List<Entity> waypoints) {
+  private static Entity createEnemy(EnemyConfig config, List<Entity> waypoints) {
     WaypointTrackerComponent waypointTracker = new WaypointTrackerComponent(waypoints);
 
     AITaskComponent aiComponent =
@@ -52,84 +80,110 @@ public class EnemyFactory {
                     100f,
                     100f));
 
-    Entity baseEnemy =
+    CombatStatsComponent combatStats =
+        new CombatStatsComponent(config.health, config.baseAttack, config.baseArmourRating);
+
+    Entity enemy =
         new Entity()
             .addComponent(new EnemyComponent())
-            .addComponent(new EnemyClickableComponent(DEFAULT_CLICK_RADIUS))
+            .addComponent(new EnemyClickableComponent(config.clickRadius))
             .addComponent(new HealthBarComponent())
             .addComponent(new PhysicsComponent())
             .addComponent(new PhysicsMovementComponent())
             .addComponent(new HitboxComponent())
-            .addComponent(
-                new CombatStatsComponent(DEFUALT_HEALTH, DEFAULT_DAMAGE, DEFAULT_ARMOUR_RATING))
+            .addComponent(combatStats)
             .addComponent(waypointTracker)
             .addComponent(aiComponent)
-            // TextureRenderComponent is placeholder until I implement animations
-            .addComponent(new TextureRenderComponent(DEFAULT_TEXTURE_PATH));
+            .addComponent(new TextureRenderComponent(config.texturePath));
 
-    baseEnemy
+    enemy
         .getComponent(PhysicsMovementComponent.class)
-        .setMaxSpeed(new Vector2(DEFAULT_SPEED, DEFAULT_SPEED));
+        .setMaxSpeed(new Vector2(config.speed, config.speed));
 
-    baseEnemy
+    // Listen for health changes to check if enemy should die
+    enemy
         .getEvents()
         .addListener(
-            "updateHealth", (EventListener1<Integer>) (health) -> takeDamage(baseEnemy, health));
-    baseEnemy.getEvents().addListener("finishedChaseTask", () -> updateWaypointTarget(baseEnemy));
-    return baseEnemy;
+            "updateHealth",
+            (EventListener1<Integer>) (health) -> checkEnemyHealth(enemy, health, config.goldAmount));
+    
+    // Listen for waypoint completion
+    enemy
+        .getEvents()
+        .addListener("finishedChaseTask", () -> updateWaypointTarget(enemy, config.baseAttack));
+
+    return enemy;
   }
 
   /**
    * Updates the enemy's target to the next waypoint in its path. Advances the waypoint tracker and
    * assigns a new chase task to the enemy's AI. If the enemy has reached the end of the waypoint
-   * list, logs a message and does not add a new task.
+   * list, triggers the "enemyreachedbase" event.
    *
-   * @param baseEnemy The enemy entity to update
+   * @param enemy The enemy entity to update
+   * @param damage The damage value to apply when enemy reaches base
    */
-  private static void updateWaypointTarget(Entity baseEnemy) {
-    WaypointTrackerComponent tracker = baseEnemy.getComponent(WaypointTrackerComponent.class);
+  private static void updateWaypointTarget(Entity enemy, int damage) {
+    WaypointTrackerComponent tracker = enemy.getComponent(WaypointTrackerComponent.class);
 
     if (tracker.advanceWaypoint()) {
-      baseEnemy
+      enemy
           .getComponent(AITaskComponent.class)
           .addTask(
               new ChaseTask(
                   tracker.getCurrentWaypointEntity(), tracker.getCurrentPriority(), 100, 100));
     } else {
       if (!tracker.getFinished()) {
-        // Reached the end of the waypoint list, do stuff once here
-        ServiceLocator.getGameAreaEvents().trigger("enemyreachedbase", DEFAULT_DAMAGE);
+        // Reached the end of the waypoint list
+        ServiceLocator.getGameAreaEvents().trigger("enemyreachedbase", damage);
         tracker.setFinished(true);
       }
     }
   }
 
   /**
-   * Destroys an enemy entity and cleans up its resources. The disposal is posted to run on the next
-   * frame to avoid concurrent modification issues.
+   * Checks if enemy health is depleted and destroys it if necessary.
    *
-   * @param enemy The enemy entity to destroy
+   * @param enemy The enemy entity to check
+   * @param newHealth The enemy's current health
+   * @param goldAmount The amount of gold to award when enemy dies
    */
-  private static void destroyEnemy(Entity enemy) {
-    ServiceLocator.getGameAreaEvents().trigger("enemyKilled", DEFAULT_GOLD_AMOUNT);
-
-    Gdx.app.postRunnable(
-        () -> {
-          enemy.dispose();
-        });
+  private static void checkEnemyHealth(Entity enemy, int newHealth, int goldAmount) {
+    if (newHealth <= 0) {
+      destroyEnemy(enemy, goldAmount);
+    }
   }
 
   /**
-   * Handles damage taken by an enemy and checks if it should be destroyed. Logs the new health
-   * value and destroys the enemy if health reaches zero or below.
+   * Destroys an enemy entity and cleans up its resources. Awards gold to the player and disposes
+   * the entity. The disposal is posted to run on the next frame to avoid concurrent modification
+   * issues.
    *
-   * @param enemy The enemy entity taking damage
-   * @param newHealth The enemy's health after taking damage
+   * @param enemy The enemy entity to destroy
+   * @param goldAmount The amount of gold to award
    */
-  private static void takeDamage(Entity enemy, int newHealth) {
-    if (newHealth <= 0) {
-      destroyEnemy(enemy);
-      return;
+  private static void destroyEnemy(Entity enemy, int goldAmount) {
+    ServiceLocator.getGameAreaEvents().trigger("enemyKilled", goldAmount);
+
+    Gdx.app.postRunnable(() -> enemy.dispose());
+  }
+
+  /** Get the config for a specific enemy type */
+  public static EnemyConfig getConfig(EnemyType type) {
+    EnemyConfig config = configs.enemies.get(type.getConfigKey());
+    if (config == null) {
+      System.err.println("Failed to load enemy config for: " + type.getConfigKey());
+      return new EnemyConfig();
     }
+    return config;
+  }
+
+  /**
+   * Deprecated: Use createEnemy(EnemyType, waypoints) instead. This method is kept for backward
+   * compatibility but will create a default enemy type.
+   */
+  @Deprecated
+  public static Entity createBaseEnemy(List<Entity> waypoints) {
+    return createEnemy(EnemyType.SCAVENGER, waypoints);
   }
 }

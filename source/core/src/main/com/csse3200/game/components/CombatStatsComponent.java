@@ -112,8 +112,8 @@ public class CombatStatsComponent extends Component {
       return;
     }
 
-    if (this.armourRating == attacker.armourRating) {
-      int newHealth = getHealth() - Math.round((attacker.getBaseAttack() * 0.25f));
+    if (this.armourRating > attacker.armourRating) {
+      int newHealth = getHealth() - Math.max(1, Math.round((attacker.getBaseAttack() * 0.25f)));
       setHealth(newHealth);
       return;
     }

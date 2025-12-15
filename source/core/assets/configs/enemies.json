@@ -1,0 +1,22 @@
+{
+  "enemies": {
+    "scavenger": {
+      "health": 25,
+      "baseAttack": 10,
+      "speed": 2.0,
+      "baseArmourRating": 0,
+      "goldAmount": 250,
+      "clickRadius": 0.0,
+      "texturePath": "images/ghost_1.png"
+    },
+    "hunter": {
+      "health": 50,
+      "baseAttack": 15,
+      "speed": 2.0,
+      "baseArmourRating": 1,
+      "goldAmount": 300,
+      "clickRadius": 0.0,
+      "texturePath": "images/ghost_1.png"
+    }
+  }
+}

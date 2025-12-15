@@ -13,6 +13,7 @@ import com.csse3200.game.components.towers.DeselectHandlerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.TowerConfig;
 import com.csse3200.game.entities.factories.EnemyFactory;
+import com.csse3200.game.entities.factories.EnemyFactory.EnemyType;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.entities.factories.TowerFactory.TowerType;
@@ -359,8 +360,9 @@ public class ForestGameArea extends GameArea {
 
   private void spawnEnemy() {
     GridPoint2 spawnPos = new GridPoint2(-5, 5);
-    Entity enemy = EnemyFactory.createBaseEnemy(getWaypointEntityList());
-    spawnEntityAt(enemy, spawnPos, true, true);
+    Entity scavenger = EnemyFactory.createEnemy(EnemyType.SCAVENGER, getWaypointEntityList());
+    Entity hunter = EnemyFactory.createEnemy(EnemyType.HUNTER, getWaypointEntityList());
+    spawnEntityAt(scavenger, spawnPos, true, true);
   }
 
   // private void playMusic() {

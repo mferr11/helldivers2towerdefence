@@ -2,7 +2,7 @@
   "towers": {
     "machinegun": {
       "health": 50,
-      "baseAttack": 2,
+      "baseAttack": 4,
       "baseArmourRating": 0,
       "attackRadius": 2.0,
       "attackCooldown": 0.1,
