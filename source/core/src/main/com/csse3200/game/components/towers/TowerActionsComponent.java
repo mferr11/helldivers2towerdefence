@@ -11,58 +11,58 @@ import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.ServiceLocator;
 
 public class TowerActionsComponent extends Component {
-    private float clickRadius = 1f;
-    
-    // Static flag to track if any tower was clicked this frame
-    private static boolean towerClickedThisFrame = false;
+  private float clickRadius = 1f;
 
-    public static void resetClickFlag() {
-        towerClickedThisFrame = false;
-    }
-    
-    public static boolean wasTowerClicked() {
-        return towerClickedThisFrame;
-    }
+  // Static flag to track if any tower was clicked this frame
+  private static boolean towerClickedThisFrame = false;
 
-    @Override
-    public void update() {
-        int screenX = Gdx.input.getX();
-        int screenY = Gdx.input.getY();
+  public static void resetClickFlag() {
+    towerClickedThisFrame = false;
+  }
 
-        Camera camera = getCamera();
-        if (camera != null) {
-            // Convert screen coordinates to world coordinates
-            Vector3 worldClickPos = new Vector3(screenX, screenY, 0);
-            camera.unproject(worldClickPos);
-            
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                Vector2 entityPos = entity.getPosition();
-                Vector2 entityScale = entity.getScale();
-                
-                // Calculate center of the tower
-                float centerX = entityPos.x + (entityScale.x / 2);
-                float centerY = entityPos.y + (entityScale.y / 2);
-                
-                // Check distance from center
-                float dx = worldClickPos.x - centerX;
-                float dy = worldClickPos.y - centerY;
-                float distance = (float) Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < clickRadius) {
-                    towerClickedThisFrame = true;
-                    ServiceLocator.getGameAreaEvents().trigger("towerClicked", entity);
-                }
-            }
-        }      
-    }
+  public static boolean wasTowerClicked() {
+    return towerClickedThisFrame;
+  }
 
-    private Camera getCamera() {
-        Renderer renderer = Renderer.getCurrentRenderer();
-        CameraComponent cam = renderer.getCamera();
+  @Override
+  public void update() {
+    int screenX = Gdx.input.getX();
+    int screenY = Gdx.input.getY();
 
-        if (renderer != null && cam != null) {
-            return cam.getCamera();
+    Camera camera = getCamera();
+    if (camera != null) {
+      // Convert screen coordinates to world coordinates
+      Vector3 worldClickPos = new Vector3(screenX, screenY, 0);
+      camera.unproject(worldClickPos);
+
+      if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        Vector2 entityPos = entity.getPosition();
+        Vector2 entityScale = entity.getScale();
+
+        // Calculate center of the tower
+        float centerX = entityPos.x + (entityScale.x / 2);
+        float centerY = entityPos.y + (entityScale.y / 2);
+
+        // Check distance from center
+        float dx = worldClickPos.x - centerX;
+        float dy = worldClickPos.y - centerY;
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < clickRadius) {
+          towerClickedThisFrame = true;
+          ServiceLocator.getGameAreaEvents().trigger("towerClicked", entity);
         }
-        return null;
+      }
     }
+  }
+
+  private Camera getCamera() {
+    Renderer renderer = Renderer.getCurrentRenderer();
+    CameraComponent cam = renderer.getCamera();
+
+    if (renderer != null && cam != null) {
+      return cam.getCamera();
+    }
+    return null;
+  }
 }

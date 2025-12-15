@@ -44,7 +44,8 @@ public class PlayerFactory {
             .addComponent(new ColliderComponent())
             .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
             .addComponent(new PlayerActions())
-            .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack, stats.baseArmourRating))
+            .addComponent(
+                new CombatStatsComponent(stats.health, stats.baseAttack, stats.baseArmourRating))
             .addComponent(new InventoryComponent(stats.gold))
             .addComponent(inputComponent)
             .addComponent(new BuildComponent(false))
@@ -54,7 +55,10 @@ public class PlayerFactory {
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();
 
-    ServiceLocator.getGameAreaEvents().addListener("updateBuildMode", (EventListener1<Boolean>) (newBuildMode) -> updateBuildMode(player, newBuildMode));
+    ServiceLocator.getGameAreaEvents()
+        .addListener(
+            "updateBuildMode",
+            (EventListener1<Boolean>) (newBuildMode) -> updateBuildMode(player, newBuildMode));
 
     return player;
   }

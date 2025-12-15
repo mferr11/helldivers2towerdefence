@@ -38,6 +38,7 @@ public class TextureRenderComponentAlpha extends RenderComponent {
 
   /**
    * Set a new texture to render
+   *
    * @param texturePath Internal path of texture to render
    */
   public void setTexture(String texturePath) {
@@ -46,6 +47,7 @@ public class TextureRenderComponentAlpha extends RenderComponent {
 
   /**
    * Set a new texture to render
+   *
    * @param texture Texture to render
    */
   public void setTexture(Texture texture) {

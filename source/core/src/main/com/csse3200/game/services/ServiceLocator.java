@@ -1,11 +1,10 @@
 package com.csse3200.game.services;
 
 import com.csse3200.game.entities.EntityService;
+import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
-import com.csse3200.game.events.EventHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,11 +51,11 @@ public class ServiceLocator {
   }
 
   public static void registerGameAreaEvents(EventHandler events) {
-      gameAreaEvents = events;
+    gameAreaEvents = events;
   }
 
   public static EventHandler getGameAreaEvents() {
-      return gameAreaEvents;
+    return gameAreaEvents;
   }
 
   public static void registerEntityService(EntityService service) {

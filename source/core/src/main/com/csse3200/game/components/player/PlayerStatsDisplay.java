@@ -46,15 +46,15 @@ public class PlayerStatsDisplay extends UIComponent {
 
     // Add health row
     table.add(healthLabel).left().padLeft(10);
-    
+
     // Move to new row for gold
     table.row();
-    
+
     // Add gold row
     table.add(goldLabel).left().padLeft(10);
-    
+
     stage.addActor(table);
-}
+  }
 
   @Override
   public void draw(SpriteBatch batch) {
@@ -71,9 +71,7 @@ public class PlayerStatsDisplay extends UIComponent {
     healthLabel.setText(text);
   }
 
-  /**
-   * Updates the player's gold on the ui.
-   */
+  /** Updates the player's gold on the ui. */
   public void updatePlayerGoldUI() {
     int gold = entity.getComponent(InventoryComponent.class).getGold();
     CharSequence text = String.format("Requisition Slips: $%d", gold);

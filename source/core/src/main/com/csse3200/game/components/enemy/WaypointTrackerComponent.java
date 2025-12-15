@@ -5,88 +5,84 @@ import com.csse3200.game.entities.Entity;
 import java.util.List;
 
 /**
- * Component for tracking an enemy's progress through waypoints.
- * Stores the current waypoint index and priority for pathfinding tasks.
+ * Component for tracking an enemy's progress through waypoints. Stores the current waypoint index
+ * and priority for pathfinding tasks.
  */
 public class WaypointTrackerComponent extends Component {
-    private int currentWaypoint;
-    private int currentPriority;
-    private List<Entity> waypoints;
-    private boolean finished;
+  private int currentWaypoint;
+  private int currentPriority;
+  private List<Entity> waypoints;
+  private boolean finished;
 
-    /**
-     * Creates a waypoint tracker with default starting values.
-     * 
-     * @param waypoints List of waypoint entities for the enemy to follow
-     */
-    public WaypointTrackerComponent(List<Entity> waypoints) {
-        this.waypoints = waypoints;
-        this.currentWaypoint = 0;
-        this.currentPriority = 1;
-        this.finished = false;
-    }
+  /**
+   * Creates a waypoint tracker with default starting values.
+   *
+   * @param waypoints List of waypoint entities for the enemy to follow
+   */
+  public WaypointTrackerComponent(List<Entity> waypoints) {
+    this.waypoints = waypoints;
+    this.currentWaypoint = 0;
+    this.currentPriority = 1;
+    this.finished = false;
+  }
 
-    /**
-     * Gets the current waypoint index.
-     * 
-     * @return current waypoint index
-     */
-    public int getCurrentWaypoint() {
-        return currentWaypoint;
-    }
+  /**
+   * Gets the current waypoint index.
+   *
+   * @return current waypoint index
+   */
+  public int getCurrentWaypoint() {
+    return currentWaypoint;
+  }
 
-    /**
-     * Gets the current priority level.
-     * 
-     * @return current priority
-     */
-    public int getCurrentPriority() {
-        return currentPriority;
-    }
+  /**
+   * Gets the current priority level.
+   *
+   * @return current priority
+   */
+  public int getCurrentPriority() {
+    return currentPriority;
+  }
 
-    /**
-     * Gets the list of waypoints.
-     * 
-     * @return waypoint list
-     */
-    public List<Entity> getWaypoints() {
-        return waypoints;
-    }
+  /**
+   * Gets the list of waypoints.
+   *
+   * @return waypoint list
+   */
+  public List<Entity> getWaypoints() {
+    return waypoints;
+  }
 
-    /**
-     * Sets the value of finished.
-     */
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
+  /** Sets the value of finished. */
+  public void setFinished(boolean finished) {
+    this.finished = finished;
+  }
 
-    /**
-     * Gets the value of finished.
-     */
-    public boolean getFinished() {
-        return this.finished;
-    }
+  /** Gets the value of finished. */
+  public boolean getFinished() {
+    return this.finished;
+  }
 
-    /**
-     * Advances to the next waypoint and increments priority.
-     * 
-     * @return true if successfully advanced, false if at end of waypoint list
-     */
-    public boolean advanceWaypoint() {
-        currentWaypoint++;
-        currentPriority++;
-        return currentWaypoint < waypoints.size();
-    }
+  /**
+   * Advances to the next waypoint and increments priority.
+   *
+   * @return true if successfully advanced, false if at end of waypoint list
+   */
+  public boolean advanceWaypoint() {
+    currentWaypoint++;
+    currentPriority++;
+    return currentWaypoint < waypoints.size();
+  }
 
-    /**
-     * Gets the current waypoint entity.
-     * 
-     * @return current waypoint entity, or null if at end of list
-     */
-    public Entity getCurrentWaypointEntity() {
-        if (currentWaypoint < waypoints.size()) {
-            return waypoints.get(currentWaypoint);
-        }
-        return null;
+  /**
+   * Gets the current waypoint entity.
+   *
+   * @return current waypoint entity, or null if at end of list
+   */
+  public Entity getCurrentWaypointEntity() {
+    if (currentWaypoint < waypoints.size()) {
+      return waypoints.get(currentWaypoint);
     }
+    return null;
+  }
 }

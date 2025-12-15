@@ -3,6 +3,7 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -11,23 +12,21 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.towers.DeselectHandlerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.TowerConfig;
-import com.csse3200.game.events.EventHandler;
-import com.csse3200.game.events.listeners.EventListener1;
-import com.csse3200.game.waveSystem.Wave;
 import com.csse3200.game.entities.factories.EnemyFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.entities.factories.TowerFactory.TowerType;
+import com.csse3200.game.events.EventHandler;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.TowerActionsUI;
 import com.csse3200.game.ui.deckUI;
-import com.badlogic.gdx.utils.Timer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.csse3200.game.waveSystem.Wave;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -91,14 +90,20 @@ public class ForestGameArea extends GameArea {
   public void create() {
     towerPlacementList.clear();
     ServiceLocator.registerGameAreaEvents(this.getEvents());
-    ServiceLocator.getGameAreaEvents().addListener("sellTower", (EventListener1<Entity>) this::removeTower);
-    ServiceLocator.getGameAreaEvents().addListener("enemyreachedbase", (EventListener1<Integer>) this::damagebase);
+    ServiceLocator.getGameAreaEvents()
+        .addListener("sellTower", (EventListener1<Entity>) this::removeTower);
+    ServiceLocator.getGameAreaEvents()
+        .addListener("enemyreachedbase", (EventListener1<Integer>) this::damagebase);
 
-    this.getEvents().addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
-    this.getEvents().addListener("towerPlacementClick", (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
-    
+    this.getEvents()
+        .addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
+    this.getEvents()
+        .addListener(
+            "towerPlacementClick",
+            (EventListener1<GridPoint2>) (location) -> tryTowerPlacement(location));
 
-    ServiceLocator.getGameAreaEvents().addListener("selectTowerType", (EventListener1<TowerType>) this::setSelectedTowerType);
+    ServiceLocator.getGameAreaEvents()
+        .addListener("selectTowerType", (EventListener1<TowerType>) this::setSelectedTowerType);
 
     loadAssets();
 
@@ -112,7 +117,6 @@ public class ForestGameArea extends GameArea {
 
     this.playerRef = spawnPlayer();
     displayUI();
-
   }
 
   private void damagebase(Integer damage) {
@@ -132,11 +136,11 @@ public class ForestGameArea extends GameArea {
   }
 
   private void setSelectedTowerType(TowerType towerType) {
-      this.selectedTowerType = towerType;
-      System.out.println("Selected tower type: " + towerType);
-      
-      // Update the preview to show the selected tower
-      ServiceLocator.getGameAreaEvents().trigger("updateTowerPreview", towerType);
+    this.selectedTowerType = towerType;
+    System.out.println("Selected tower type: " + towerType);
+
+    // Update the preview to show the selected tower
+    ServiceLocator.getGameAreaEvents().trigger("updateTowerPreview", towerType);
   }
 
   private void tryTowerPlacement(GridPoint2 location) {
@@ -161,85 +165,96 @@ public class ForestGameArea extends GameArea {
   }
 
   private void startWaveSpawning() {
-      currentWaveIndex = 0;
-      currentWave = waves.get(currentWaveIndex);
-      final int[] enemiesSpawned = {0};
-        
-      spawnTask = Timer.schedule(new Timer.Task() {
-          @Override
-          public void run() {
-            // Safety check before doing anything
-            if (ServiceLocator.getPhysicsService() == null) {
-                this.cancel();
-                return;
-            }
-            if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
-                spawnEnemy();
-                enemiesSpawned[0]++;
-            } else {
-                // Stop the timer when all enemies are spawned
-                this.cancel();
-                spawnTask = null;
-            }
-          }
-      }, 0, currentWave.getSpawnRate());
-    }
+    currentWaveIndex = 0;
+    currentWave = waves.get(currentWaveIndex);
+    final int[] enemiesSpawned = {0};
+
+    spawnTask =
+        Timer.schedule(
+            new Timer.Task() {
+              @Override
+              public void run() {
+                // Safety check before doing anything
+                if (ServiceLocator.getPhysicsService() == null) {
+                  this.cancel();
+                  return;
+                }
+                if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
+                  spawnEnemy();
+                  enemiesSpawned[0]++;
+                } else {
+                  // Stop the timer when all enemies are spawned
+                  this.cancel();
+                  spawnTask = null;
+                }
+              }
+            },
+            0,
+            currentWave.getSpawnRate());
+  }
 
   public void checkEnemyKills(int gold) {
-      waveEnemiesKilled++;
-      System.out.println(waveEnemiesKilled);
-      InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
-      inventory.addGold(gold);
+    waveEnemiesKilled++;
+    System.out.println(waveEnemiesKilled);
+    InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
+    inventory.addGold(gold);
 
-      ServiceLocator.getGameAreaEvents().trigger("updateGold");
+    ServiceLocator.getGameAreaEvents().trigger("updateGold");
 
-      if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
-          // All enemies in current wave are dead
-          if (currentWaveIndex >= waves.size() - 1) {
-              // This is the final wave
-              System.out.println("Victory!");
-          } else {
-              // There are more waves, wait 5 seconds before starting the next one
-              System.out.println("Wave " + (currentWaveIndex + 1) + " complete! Next wave in 5 seconds...");
-              Timer.schedule(new Timer.Task() {
-                  @Override
-                  public void run() {
-                      startNextWave();
-                  }
-              }, 5f); // 5 second delay
-          }
+    if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
+      // All enemies in current wave are dead
+      if (currentWaveIndex >= waves.size() - 1) {
+        // This is the final wave
+        System.out.println("Victory!");
+      } else {
+        // There are more waves, wait 5 seconds before starting the next one
+        System.out.println(
+            "Wave " + (currentWaveIndex + 1) + " complete! Next wave in 5 seconds...");
+        Timer.schedule(
+            new Timer.Task() {
+              @Override
+              public void run() {
+                startNextWave();
+              }
+            },
+            5f); // 5 second delay
       }
+    }
   }
 
   private void startNextWave() {
-      currentWaveIndex++;
-      if (currentWaveIndex < waves.size()) {
-          currentWave = waves.get(currentWaveIndex);
-          waveEnemiesKilled = 0; // Reset the counter for the new wave
-          
-          System.out.println("Starting wave " + (currentWaveIndex + 1) + "!");
-          
-          final int[] enemiesSpawned = {0};
-          
-          spawnTask = Timer.schedule(new Timer.Task() {
-              @Override
-              public void run() {
+    currentWaveIndex++;
+    if (currentWaveIndex < waves.size()) {
+      currentWave = waves.get(currentWaveIndex);
+      waveEnemiesKilled = 0; // Reset the counter for the new wave
+
+      System.out.println("Starting wave " + (currentWaveIndex + 1) + "!");
+
+      final int[] enemiesSpawned = {0};
+
+      spawnTask =
+          Timer.schedule(
+              new Timer.Task() {
+                @Override
+                public void run() {
                   // Safety check before doing anything
                   if (ServiceLocator.getPhysicsService() == null) {
-                      this.cancel();
-                      return;
+                    this.cancel();
+                    return;
                   }
                   if (enemiesSpawned[0] < currentWave.getTotalEnemies()) {
-                      spawnEnemy();
-                      enemiesSpawned[0]++;
+                    spawnEnemy();
+                    enemiesSpawned[0]++;
                   } else {
-                      // Stop the timer when all enemies are spawned
-                      this.cancel();
-                      spawnTask = null;
+                    // Stop the timer when all enemies are spawned
+                    this.cancel();
+                    spawnTask = null;
                   }
-              }
-          }, 0, currentWave.getSpawnRate());
-      }
+                }
+              },
+              0,
+              currentWave.getSpawnRate());
+    }
   }
 
   private void displayUI() {
@@ -279,21 +294,21 @@ public class ForestGameArea extends GameArea {
     }
 
     // Add the path to list of tiles where towers cannot be placed
-    for (int i = 0; i <waypointsGridPointList.size() - 1; i++) {
-        GridPoint2 start = waypointsGridPointList.get(i);
-        GridPoint2 end = waypointsGridPointList.get(i + 1);
-        
-        int dx = Integer.signum(end.x - start.x);
-        int dy = Integer.signum(end.y - start.y);
-        
-        int x = start.x;
-        int y = start.y;
-        
-        while (x != end.x || y != end.y) {
-            towerPlacementList.add(new GridPoint2(x, y));
-            x += dx;
-            y += dy;
-        }
+    for (int i = 0; i < waypointsGridPointList.size() - 1; i++) {
+      GridPoint2 start = waypointsGridPointList.get(i);
+      GridPoint2 end = waypointsGridPointList.get(i + 1);
+
+      int dx = Integer.signum(end.x - start.x);
+      int dy = Integer.signum(end.y - start.y);
+
+      int x = start.x;
+      int y = start.y;
+
+      while (x != end.x || y != end.y) {
+        towerPlacementList.add(new GridPoint2(x, y));
+        x += dx;
+        y += dy;
+      }
     }
     towerPlacementList.add(waypointsGridPointList.get(waypointsGridPointList.size() - 1));
   }
@@ -312,28 +327,33 @@ public class ForestGameArea extends GameArea {
     // Get the cost of the selected tower
     TowerConfig config = TowerFactory.getConfig(selectedTowerType);
     InventoryComponent inventory = playerRef.getComponent(InventoryComponent.class);
-    
+
     // Check if player can afford it
     if (!inventory.hasGold(config.cost)) {
-        System.out.println("Cannot place tower: Not enough gold!");
-        return null;
+      System.out.println("Cannot place tower: Not enough gold!");
+      return null;
     }
-    
+
     // Deduct the cost
     inventory.addGold(-config.cost);
-    System.out.println("Placed " + selectedTowerType + " tower for $" + config.cost + 
-                       ". Remaining gold: $" + inventory.getGold());
-    
+    System.out.println(
+        "Placed "
+            + selectedTowerType
+            + " tower for $"
+            + config.cost
+            + ". Remaining gold: $"
+            + inventory.getGold());
+
     // Create and spawn the tower
     Entity newTower = TowerFactory.createTower(selectedTowerType);
     spawnEntityAt(newTower, location, false, false);
-    
+
     // Trigger event to update UI
     ServiceLocator.getGameAreaEvents().trigger("updateGold");
-    
+
     // Exit build mode after placing
     ServiceLocator.getGameAreaEvents().trigger("updateBuildMode", false);
-    
+
     return newTower;
   }
 
@@ -378,8 +398,8 @@ public class ForestGameArea extends GameArea {
     super.dispose();
 
     if (spawnTask != null) {
-        spawnTask.cancel();
-        spawnTask = null;
+      spawnTask.cancel();
+      spawnTask = null;
     }
 
     ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();

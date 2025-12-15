@@ -1,7 +1,5 @@
 package com.csse3200.game.areas.terrain;
 
-import java.util.List;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -18,6 +16,7 @@ import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.RandomUtils;
+import java.util.List;
 
 /** Factory for creating game terrains. */
 public class TerrainFactory {
@@ -88,7 +87,11 @@ public class TerrainFactory {
   }
 
   private TerrainComponent createForestDemoTerrain(
-      float tileWorldSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks, List<GridPoint2> waypoints) {
+      float tileWorldSize,
+      TextureRegion grass,
+      TextureRegion grassTuft,
+      TextureRegion rocks,
+      List<GridPoint2> waypoints) {
     GridPoint2 tilePixelSize = new GridPoint2(grass.getRegionWidth(), grass.getRegionHeight());
     TiledMap tiledMap = createForestDemoTiles(tilePixelSize, grass, grassTuft, rocks, waypoints);
     TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
@@ -109,7 +112,11 @@ public class TerrainFactory {
   }
 
   private TiledMap createForestDemoTiles(
-      GridPoint2 tileSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks, List<GridPoint2> waypoints) {
+      GridPoint2 tileSize,
+      TextureRegion grass,
+      TextureRegion grassTuft,
+      TextureRegion rocks,
+      List<GridPoint2> waypoints) {
     TiledMap tiledMap = new TiledMap();
     TerrainTile grassTile = new TerrainTile(grass);
     TerrainTile grassTuftTile = new TerrainTile(grassTuft);
@@ -125,22 +132,22 @@ public class TerrainFactory {
 
     // Draw rocks along the entire path between waypoints
     for (int i = 0; i < waypoints.size() - 1; i++) {
-        GridPoint2 start = waypoints.get(i);
-        GridPoint2 end = waypoints.get(i + 1);
-        
-        // Determine the direction to step (1, -1, or 0 for each axis)
-        int dx = Integer.signum(end.x - start.x);
-        int dy = Integer.signum(end.y - start.y);
-        
-        int x = start.x;
-        int y = start.y;
-        
-        // Draw tiles from start to end
-        while (x != end.x || y != end.y) {
-            fillSpecificTile(layer, new GridPoint2(x, y), rockTile);
-            x += dx;
-            y += dy;
-        }
+      GridPoint2 start = waypoints.get(i);
+      GridPoint2 end = waypoints.get(i + 1);
+
+      // Determine the direction to step (1, -1, or 0 for each axis)
+      int dx = Integer.signum(end.x - start.x);
+      int dy = Integer.signum(end.y - start.y);
+
+      int x = start.x;
+      int y = start.y;
+
+      // Draw tiles from start to end
+      while (x != end.x || y != end.y) {
+        fillSpecificTile(layer, new GridPoint2(x, y), rockTile);
+        x += dx;
+        y += dy;
+      }
     }
     // Draw the final waypoint
     fillSpecificTile(layer, waypoints.get(waypoints.size() - 1), rockTile);
@@ -171,7 +178,8 @@ public class TerrainFactory {
     }
   }
 
-  private static void fillSpecificTile(TiledMapTileLayer layer, GridPoint2 location, TerrainTile tile) {
+  private static void fillSpecificTile(
+      TiledMapTileLayer layer, GridPoint2 location, TerrainTile tile) {
     Cell cell = new Cell();
     cell.setTile(tile);
     layer.setCell(location.x, location.y, cell);

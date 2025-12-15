@@ -2,7 +2,6 @@ package com.csse3200.game.entities;
 
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.components.Component;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +30,17 @@ public class EntityService {
   }
 
   public <T extends Component> Array<Entity> getAllEntitiesWithComponent(Class<T> componentClass) {
-      Array<Entity> entitiesWithComp = new Array<>();
+    Array<Entity> entitiesWithComp = new Array<>();
 
-      // Use indexed iteration instead of foreach to avoid nested iterator issues
-      for (int i = 0; i < entities.size; i++) {
-          Entity entity = entities.get(i);
-          if (entity.getComponent(componentClass) != null) {
-              entitiesWithComp.add(entity);
-          }
+    // Use indexed iteration instead of foreach to avoid nested iterator issues
+    for (int i = 0; i < entities.size; i++) {
+      Entity entity = entities.get(i);
+      if (entity.getComponent(componentClass) != null) {
+        entitiesWithComp.add(entity);
       }
+    }
 
-      return entitiesWithComp;
+    return entitiesWithComp;
   }
 
   /**
