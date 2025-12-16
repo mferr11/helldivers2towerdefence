@@ -103,7 +103,6 @@ public class CombatStatsComponent extends Component {
   public void hit(CombatStatsComponent attacker) {
     CloakComponent cloak = entity.getComponent(CloakComponent.class);
     if (cloak != null && cloak.isCloaked()) {
-      logger.debug("{} is cloaked - attack blocked", entity);
       return; // No damage while cloaked
     }
 

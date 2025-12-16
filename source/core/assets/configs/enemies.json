@@ -43,13 +43,17 @@
       }
     },
     "nursing": {
-      "health": 400,
+      "health": 40,
       "baseAttack": 40,
       "speed": 1.0,
       "baseArmourRating": 1,
       "goldAmount": 500,
       "clickRadius": 0.0,
-      "texturePath": "images/ghost_1.png"
+      "texturePath": "images/ghost_1.png",
+      "nursing": {
+        "minSpawnCount": 2,
+        "maxSpawnCount": 4
+      }
     }
   }
 }

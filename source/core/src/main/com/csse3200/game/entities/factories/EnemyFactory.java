@@ -9,6 +9,7 @@ import com.csse3200.game.components.enemy.EnemyComponent;
 import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
 import com.csse3200.game.components.enemy.abilities.CloakComponent;
+import com.csse3200.game.components.enemy.abilities.NursingComponent;
 import com.csse3200.game.components.enemy.abilities.PounceComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
@@ -46,13 +47,27 @@ public class EnemyFactory {
   }
 
   /**
-   * Creates an enemy of the specified type with the provided waypoints.
+   * Creates an enemy of the specified type with the provided waypoints, starting at the first
+   * waypoint.
    *
    * @param type The type of enemy to create
    * @param waypoints List of waypoint entities for the enemy to follow
    * @return A fully configured enemy entity
    */
   public static Entity createEnemy(EnemyType type, List<Entity> waypoints) {
+    return createEnemy(type, waypoints, 0);
+  }
+
+  /**
+   * Creates an enemy of the specified type with the provided waypoints, starting at a specific
+   * waypoint.
+   *
+   * @param type The type of enemy to create
+   * @param waypoints List of waypoint entities for the enemy to follow
+   * @param startWaypointIndex The waypoint index to start from (0-based)
+   * @return A fully configured enemy entity
+   */
+  public static Entity createEnemy(EnemyType type, List<Entity> waypoints, int startWaypointIndex) {
     EnemyConfig config = configs.enemies.get(type.getConfigKey());
 
     if (config == null) {
@@ -60,7 +75,7 @@ public class EnemyFactory {
       config = new EnemyConfig();
     }
 
-    Entity enemy = createEnemy(config, waypoints);
+    Entity enemy = createEnemy(config, waypoints, startWaypointIndex);
 
     // ENEMY SPECIFIC COMPONENTS
     switch (type) {
@@ -78,13 +93,18 @@ public class EnemyFactory {
           enemy.addComponent(new PounceComponent(3f, 7f, 0.5f, 2.5f, 4f, 0.5f));
         }
         break;
-      case SCAVENGER:
-        // Scavenger has no special abilities
-        break;
       case STALKER:
         if (config.cloak != null) {
           enemy.addComponent(new CloakComponent(config.cloak));
         }
+        break;
+      case NURSING:
+        if (config.nursing != null) {
+          enemy.addComponent(new NursingComponent(config.nursing));
+        }
+        break;
+      case SCAVENGER:
+        // Scavenger has no special abilities
         break;
       default:
         break;
@@ -100,10 +120,17 @@ public class EnemyFactory {
    *
    * @param config The enemy configuration
    * @param waypoints List of waypoint entities for the enemy to follow in sequence
+   * @param startWaypointIndex The waypoint index to start from (0-based)
    * @return A fully configured enemy entity with physics, combat stats, AI, and event listeners
    */
-  private static Entity createEnemy(EnemyConfig config, List<Entity> waypoints) {
+  private static Entity createEnemy(
+      EnemyConfig config, List<Entity> waypoints, int startWaypointIndex) {
     WaypointTrackerComponent waypointTracker = new WaypointTrackerComponent(waypoints);
+
+    // Set the starting waypoint if not starting from the beginning
+    if (startWaypointIndex > 0) {
+      waypointTracker.setCurrentWaypoint(startWaypointIndex);
+    }
 
     AITaskComponent aiComponent =
         new AITaskComponent()

@@ -19,6 +19,7 @@ import com.csse3200.game.entities.factories.TowerFactory;
 import com.csse3200.game.entities.factories.TowerFactory.TowerType;
 import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.events.listeners.EventListener1;
+import com.csse3200.game.events.listeners.EventListener3;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.TowerActionsUI;
@@ -36,10 +37,14 @@ public class ForestGameArea extends GameArea {
   private Entity playerRef;
 
   private List<Wave> waves;
-  private Timer.Task spawnTask;
   private int waveEnemiesKilled = 0;
+  private int additionalEnemiesSpawned = 0;
   private Wave currentWave;
   private int currentWaveIndex = 0;
+
+  private Timer.Task spawnTask;
+  private Timer.Task waveCompletionCheckTask;
+  private Timer.Task nextWaveTask;
 
   private final EventHandler events;
 
@@ -95,6 +100,12 @@ public class ForestGameArea extends GameArea {
         .addListener("sellTower", (EventListener1<Entity>) this::removeTower);
     ServiceLocator.getGameAreaEvents()
         .addListener("enemyreachedbase", (EventListener1<Integer>) this::damagebase);
+
+    // Add this listener for nursing enemy spawns
+    ServiceLocator.getGameAreaEvents()
+        .addListener(
+            "spawnNursingEnemies",
+            (EventListener3<Integer, Vector2, Integer>) this::spawnNursingEnemies);
 
     this.getEvents()
         .addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
@@ -158,11 +169,39 @@ public class ForestGameArea extends GameArea {
     spawnEntity(towerPreview);
   }
 
+  /**
+   * Spawns multiple enemies at a specific location and waypoint index. Used when nursing enemies
+   * die and spawn scavengers.
+   *
+   * @param count Number of enemies to spawn
+   * @param position Position to spawn enemies at
+   * @param waypointIndex Waypoint index to start enemies from
+   */
+  private void spawnNursingEnemies(int count, Vector2 position, int waypointIndex) {
+    float radius = 0.8f; // Distance from center
+
+    for (int i = 0; i < count; i++) {
+      // Arrange in a circle around the death position
+      float angle = (float) (2 * Math.PI * i / count);
+      float offsetX = (float) (Math.cos(angle) * radius);
+      float offsetY = (float) (Math.sin(angle) * radius);
+
+      Entity scavenger =
+          EnemyFactory.createEnemy(EnemyType.SCAVENGER, getWaypointEntityList(), waypointIndex);
+
+      // Use floating-point position directly instead of converting to GridPoint2
+      Vector2 spawnPos = new Vector2(position.x + offsetX, position.y + offsetY);
+      spawnEntity(scavenger);
+      scavenger.setPosition(spawnPos);
+    }
+    additionalEnemiesSpawned += count;
+  }
+
   private void initialiseWaves() {
     waves = new ArrayList<>();
 
     // Test Wave
-    waves.add(new Wave(0, false, 1f, List.of(EnemyType.STALKER), waypointEntityList));
+    waves.add(new Wave(0, false, 1f, List.of(EnemyType.NURSING), waypointEntityList));
 
     // Wave 1
     waves.add(
@@ -235,7 +274,30 @@ public class ForestGameArea extends GameArea {
 
     ServiceLocator.getGameAreaEvents().trigger("updateGold");
 
-    if (waveEnemiesKilled >= currentWave.getTotalEnemies()) {
+    // Cancel previous completion check if one exists
+    if (waveCompletionCheckTask != null) {
+      waveCompletionCheckTask.cancel();
+    }
+
+    // Defer the wave completion check slightly to allow nursing enemies to spawn children
+    waveCompletionCheckTask =
+        Timer.schedule(
+            new Timer.Task() {
+              @Override
+              public void run() {
+                checkWaveCompletion();
+                waveCompletionCheckTask = null;
+              }
+            },
+            0.1f); // 100ms delay
+  }
+
+  /** Checks if the current wave is complete and starts the next wave if needed. */
+  private void checkWaveCompletion() {
+    // Check against total enemies including those spawned by nursing enemies
+    int totalEnemiesInWave = currentWave.getTotalEnemies() + additionalEnemiesSpawned;
+
+    if (waveEnemiesKilled >= totalEnemiesInWave) {
       // All enemies in current wave are dead
       if (currentWaveIndex >= waves.size() - 1) {
         // This is the final wave
@@ -244,14 +306,22 @@ public class ForestGameArea extends GameArea {
         // There are more waves, wait 5 seconds before starting the next one
         System.out.println(
             "Wave " + (currentWaveIndex + 1) + " complete! Next wave in 5 seconds...");
-        Timer.schedule(
-            new Timer.Task() {
-              @Override
-              public void run() {
-                startNextWave();
-              }
-            },
-            5f); // 5 second delay
+
+        // Cancel previous next wave timer if one exists
+        if (nextWaveTask != null) {
+          nextWaveTask.cancel();
+        }
+
+        nextWaveTask =
+            Timer.schedule(
+                new Timer.Task() {
+                  @Override
+                  public void run() {
+                    startNextWave();
+                    nextWaveTask = null;
+                  }
+                },
+                5f); // 5 second delay
       }
     }
   }
@@ -261,7 +331,8 @@ public class ForestGameArea extends GameArea {
     if (currentWaveIndex < waves.size()) {
       currentWave = waves.get(currentWaveIndex);
       currentWave.reset();
-      waveEnemiesKilled = 0; // Reset the counter for the new wave
+      waveEnemiesKilled = 0;
+      additionalEnemiesSpawned = 0;
 
       System.out.println("Starting wave " + (currentWaveIndex + 1) + "!");
 
@@ -438,9 +509,20 @@ public class ForestGameArea extends GameArea {
   public void dispose() {
     super.dispose();
 
+    // Cancel all timer tasks
     if (spawnTask != null) {
       spawnTask.cancel();
       spawnTask = null;
+    }
+
+    if (waveCompletionCheckTask != null) {
+      waveCompletionCheckTask.cancel();
+      waveCompletionCheckTask = null;
+    }
+
+    if (nextWaveTask != null) {
+      nextWaveTask.cancel();
+      nextWaveTask = null;
     }
 
     ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();

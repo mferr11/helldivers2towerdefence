@@ -33,4 +33,13 @@ public class EnemyConfig {
     public float maxIdleTime = 7f;
     public float pauseTime = 1f;
   }
+
+  // Nursing ability configuration
+  public NursingConfig nursing;
+
+  // Configuration for the nursing ability //
+  public static class NursingConfig {
+    public int minSpawnCount = 2;
+    public int maxSpawnCount = 4;
+  }
 }

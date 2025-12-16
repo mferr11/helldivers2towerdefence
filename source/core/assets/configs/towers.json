@@ -14,7 +14,7 @@
       "baseAttack": 50,
       "baseArmourRating": 3,
       "attackRadius": 6.0,
-      "attackCooldown": 2,
+      "attackCooldown": 1.5,
       "texturePath": "images/tree.png",
       "cost": 4000
     },

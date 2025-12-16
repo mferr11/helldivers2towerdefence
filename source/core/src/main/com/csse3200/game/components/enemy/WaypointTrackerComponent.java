@@ -53,6 +53,18 @@ public class WaypointTrackerComponent extends Component {
     return waypoints;
   }
 
+  /**
+   * Sets the current waypoint index.
+   *
+   * @param index The waypoint index to set
+   */
+  public void setCurrentWaypoint(int index) {
+    if (index >= 0 && index < waypoints.size()) {
+      this.currentWaypoint = index;
+      this.currentPriority = index + 1; // Priority matches waypoint progression
+    }
+  }
+
   /** Sets the value of finished. */
   public void setFinished(boolean finished) {
     this.finished = finished;
