@@ -106,8 +106,6 @@ public class PounceComponent extends Component {
     // Stop the hunter by setting speed to zero (don't disable movement)
     PhysicsMovementComponent movement = entity.getComponent(PhysicsMovementComponent.class);
     movement.setMaxSpeed(Vector2.Zero);
-
-    System.out.println("Hunter preparing to pounce... (stopped for " + preparationDuration + "s)");
   }
 
   /** End the preparation phase and start the pounce */
@@ -128,9 +126,6 @@ public class PounceComponent extends Component {
     PhysicsMovementComponent movement = entity.getComponent(PhysicsMovementComponent.class);
     Vector2 pounceSpeed = originalSpeed.cpy().scl(currentSpeedMultiplier);
     movement.setMaxSpeed(pounceSpeed);
-
-    System.out.println(
-        "Hunter pouncing! Speed multiplier: " + currentSpeedMultiplier + ", Speed: " + pounceSpeed);
   }
 
   /** End the pounce and return to normal */
@@ -143,8 +138,6 @@ public class PounceComponent extends Component {
     // Reset to original speed
     PhysicsMovementComponent movement = entity.getComponent(PhysicsMovementComponent.class);
     movement.setMaxSpeed(originalSpeed.cpy());
-
-    System.out.println("Pounce ended. Next pounce in: " + currentCooldown + " seconds");
   }
 
   public boolean isPouncing() {

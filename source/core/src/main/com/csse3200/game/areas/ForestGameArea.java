@@ -161,32 +161,38 @@ public class ForestGameArea extends GameArea {
   private void initialiseWaves() {
     waves = new ArrayList<>();
 
-  // Wave 1
-  waves.add(new Wave(1, false, 1f, 
-      List.of(
-          EnemyType.SCAVENGER, 
-          EnemyType.SCAVENGER,
-          EnemyType.SCAVENGER,
-          EnemyType.SCAVENGER,
-          EnemyType.HUNTER
-      ),
-      waypointEntityList));
+    // Wave 1
+    waves.add(
+        new Wave(
+            1,
+            false,
+            1f,
+            List.of(
+                EnemyType.SCAVENGER,
+                EnemyType.SCAVENGER,
+                EnemyType.SCAVENGER,
+                EnemyType.SCAVENGER,
+                EnemyType.HUNTER),
+            waypointEntityList));
 
-  // Wave 2
-  waves.add(new Wave(2, false, 0.75f, 
-      List.of(
-          EnemyType.SCAVENGER, 
-          EnemyType.HUNTER,
-          EnemyType.SCAVENGER,
-          EnemyType.HUNTER,
-          EnemyType.HUNTER,
-          EnemyType.SCAVENGER,
-          EnemyType.HUNTER,
-          EnemyType.SCAVENGER,
-          EnemyType.HUNTER,
-          EnemyType.SCAVENGER
-      ),
-      waypointEntityList));
+    // Wave 2
+    waves.add(
+        new Wave(
+            2,
+            false,
+            0.75f,
+            List.of(
+                EnemyType.SCAVENGER,
+                EnemyType.HUNTER,
+                EnemyType.SCAVENGER,
+                EnemyType.HUNTER,
+                EnemyType.HUNTER,
+                EnemyType.SCAVENGER,
+                EnemyType.HUNTER,
+                EnemyType.SCAVENGER,
+                EnemyType.HUNTER,
+                EnemyType.SCAVENGER),
+            waypointEntityList));
   }
 
   private void startWaveSpawning() {
@@ -385,15 +391,15 @@ public class ForestGameArea extends GameArea {
 
   private void spawnEnemy() {
     GridPoint2 spawnPos = new GridPoint2(-5, 5);
-    
+
     // Get the next enemy type from the current wave
     EnemyType enemyType = currentWave.getNextEnemy();
-    
+
     if (enemyType != null) {
       Entity enemy = EnemyFactory.createEnemy(enemyType, getWaypointEntityList());
       spawnEntityAt(enemy, spawnPos, true, true);
     }
-}
+  }
 
   // private void playMusic() {
   //   Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);

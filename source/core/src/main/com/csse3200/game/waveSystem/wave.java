@@ -2,7 +2,6 @@ package com.csse3200.game.waveSystem;
 
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.EnemyFactory.EnemyType;
-
 import java.util.List;
 
 /** Represents a wave of enemies with configurable composition and multiple possible paths. */
@@ -11,7 +10,7 @@ public class Wave {
   private final boolean isBossWave;
   private final List<EnemyType> enemies;
   private final float spawnRate;
-  private int currentEnemyIndex = 0;  // Track which enemy to spawn next
+  private int currentEnemyIndex = 0; // Track which enemy to spawn next
 
   public Wave(
       int waveNumber,
