@@ -8,6 +8,7 @@ import com.csse3200.game.components.enemy.EnemyClickableComponent;
 import com.csse3200.game.components.enemy.EnemyComponent;
 import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
+import com.csse3200.game.components.enemy.abilities.CloakComponent;
 import com.csse3200.game.components.enemy.abilities.PounceComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
@@ -18,7 +19,7 @@ import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.rendering.TextureRenderComponentAlpha;
 import com.csse3200.game.services.ServiceLocator;
 import java.util.List;
 
@@ -29,7 +30,9 @@ public class EnemyFactory {
 
   public enum EnemyType {
     SCAVENGER("scavenger"),
-    HUNTER("hunter");
+    HUNTER("hunter"),
+    STALKER("stalker"),
+    NURSING("nursing");
 
     private final String configKey;
 
@@ -78,6 +81,11 @@ public class EnemyFactory {
       case SCAVENGER:
         // Scavenger has no special abilities
         break;
+      case STALKER:
+        if (config.cloak != null) {
+          enemy.addComponent(new CloakComponent(config.cloak));
+        }
+        break;
       default:
         break;
     }
@@ -120,7 +128,7 @@ public class EnemyFactory {
             .addComponent(combatStats)
             .addComponent(waypointTracker)
             .addComponent(aiComponent)
-            .addComponent(new TextureRenderComponent(config.texturePath));
+            .addComponent(new TextureRenderComponentAlpha(config.texturePath, 1.0f));
 
     enemy
         .getComponent(PhysicsMovementComponent.class)

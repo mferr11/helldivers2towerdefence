@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.csse3200.game.components.enemy.abilities.CloakComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,12 @@ public class CombatStatsComponent extends Component {
   }
 
   public void hit(CombatStatsComponent attacker) {
+    CloakComponent cloak = entity.getComponent(CloakComponent.class);
+    if (cloak != null && cloak.isCloaked()) {
+      logger.debug("{} is cloaked - attack blocked", entity);
+      return; // No damage while cloaked
+    }
+
     if (this.armourRating == attacker.armourRating) {
       int newHealth = getHealth() - attacker.getBaseAttack();
       setHealth(newHealth);
@@ -107,13 +114,13 @@ public class CombatStatsComponent extends Component {
     }
 
     if (this.armourRating < attacker.armourRating) {
-      int newHealth = getHealth() - Math.round((attacker.getBaseAttack() * 2f));
+      int newHealth = getHealth() - Math.round((attacker.getBaseAttack() * 1.5f));
       setHealth(newHealth);
       return;
     }
 
     if (this.armourRating > attacker.armourRating) {
-      int newHealth = getHealth() - Math.max(1, Math.round((attacker.getBaseAttack() * 0.25f)));
+      int newHealth = getHealth() - Math.max(1, Math.round((attacker.getBaseAttack() * 0.5f)));
       setHealth(newHealth);
       return;
     }

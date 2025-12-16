@@ -12,7 +12,7 @@ public class EnemyConfig {
   // Pounce ability configuration
   public PounceConfig pounce;
 
-  /** Configuration for the pounce ability */
+  // Configuration for the pounce ability //
   public static class PounceConfig {
     public float minCooldown = 3f;
     public float maxCooldown = 7f;
@@ -20,5 +20,17 @@ public class EnemyConfig {
     public float minSpeedMultiplier = 2.5f;
     public float maxSpeedMultiplier = 4f;
     public float preparationDuration = 0.5f;
+  }
+
+  // Cloak ability configuration
+  public CloakConfig cloak;
+
+  // Configuration for the cloak ability //
+  public static class CloakConfig {
+    public float minCloakTime = 3f;
+    public float maxCloakTime = 5f;
+    public float minIdleTime = 4f;
+    public float maxIdleTime = 7f;
+    public float pauseTime = 1f;
   }
 }

@@ -161,6 +161,9 @@ public class ForestGameArea extends GameArea {
   private void initialiseWaves() {
     waves = new ArrayList<>();
 
+    // Test Wave
+    waves.add(new Wave(0, false, 1f, List.of(EnemyType.STALKER), waypointEntityList));
+
     // Wave 1
     waves.add(
         new Wave(

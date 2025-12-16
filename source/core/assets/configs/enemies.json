@@ -25,6 +25,31 @@
       "goldAmount": 250,
       "clickRadius": 0.0,
       "texturePath": "images/ghost_1.png"
+    },
+    "stalker": {
+      "health": 200,
+      "baseAttack": 40,
+      "speed": 2.5,
+      "baseArmourRating": 1,
+      "goldAmount": 1000,
+      "clickRadius": 0.0,
+      "texturePath": "images/ghost_1.png",
+      "cloak": {
+        "minCloakTime": 1.0,
+        "maxCloakTime": 2.0,
+        "minIdleTime": 3.0,
+        "maxIdleTime": 5.0,
+        "pauseTime": 0.5
+      }
+    },
+    "nursing": {
+      "health": 400,
+      "baseAttack": 40,
+      "speed": 1.0,
+      "baseArmourRating": 1,
+      "goldAmount": 500,
+      "clickRadius": 0.0,
+      "texturePath": "images/ghost_1.png"
     }
   }
 }

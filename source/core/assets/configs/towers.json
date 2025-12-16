@@ -11,8 +11,8 @@
     },
     "railgun": {
       "health": 50,
-      "baseAttack": 20,
-      "baseArmourRating": 1,
+      "baseAttack": 50,
+      "baseArmourRating": 3,
       "attackRadius": 6.0,
       "attackCooldown": 2,
       "texturePath": "images/tree.png",
@@ -20,7 +20,7 @@
     },
     "rocket": {
       "health": 50,
-      "baseAttack": 15,
+      "baseAttack": 20,
       "baseArmourRating": 2,
       "attackRadius": 3.0,
       "attackCooldown": 0.75,
