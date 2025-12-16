@@ -1,24 +1,24 @@
 {
   "enemies": {
     "hunter": {
-      "health": 40,
+      "health": 100,
       "baseAttack": 15,
-      "speed": 1.5,
-      "baseArmourRating": 1,
+      "speed": 2.5,
+      "baseArmourRating": 0,
       "goldAmount": 350,
       "clickRadius": 0.0,
       "texturePath": "images/ghost_1.png",
       "pounce": {
-        "minCooldown": 3.0,
-        "maxCooldown": 7.0,
+        "minCooldown": 2.0,
+        "maxCooldown": 4.0,
         "duration": 0.5,
         "minSpeedMultiplier": 2.5,
-        "maxSpeedMultiplier": 4.0,
+        "maxSpeedMultiplier": 3.5,
         "preparationDuration": 0.5
       }
     },
     "scavenger": {
-      "health": 25,
+      "health": 50,
       "baseAttack": 10,
       "speed": 2.0,
       "baseArmourRating": 0,
