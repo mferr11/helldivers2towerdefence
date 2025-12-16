@@ -8,4 +8,17 @@ public class EnemyConfig {
   public int goldAmount = 250;
   public float clickRadius = 0.5f;
   public String texturePath = "images/ghost_1.png";
+
+  // Pounce ability configuration
+  public PounceConfig pounce;
+
+  /** Configuration for the pounce ability */
+  public static class PounceConfig {
+    public float minCooldown = 3f;
+    public float maxCooldown = 7f;
+    public float duration = 0.5f;
+    public float minSpeedMultiplier = 2.5f;
+    public float maxSpeedMultiplier = 4f;
+    public float preparationDuration = 0.5f;
+  }
 }

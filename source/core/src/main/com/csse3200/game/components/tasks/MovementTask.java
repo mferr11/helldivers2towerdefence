@@ -51,7 +51,7 @@ public class MovementTask extends DefaultTask {
       status = Status.FINISHED;
       logger.debug("Finished moving to {}", target);
     } else {
-      checkIfStuck();
+      // checkIfStuck();
     }
   }
 

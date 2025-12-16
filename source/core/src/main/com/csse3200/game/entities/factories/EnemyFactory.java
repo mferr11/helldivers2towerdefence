@@ -8,6 +8,7 @@ import com.csse3200.game.components.enemy.EnemyClickableComponent;
 import com.csse3200.game.components.enemy.EnemyComponent;
 import com.csse3200.game.components.enemy.HealthBarComponent;
 import com.csse3200.game.components.enemy.WaypointTrackerComponent;
+import com.csse3200.game.components.enemy.abilities.PounceComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.EnemyConfig;
@@ -53,10 +54,35 @@ public class EnemyFactory {
 
     if (config == null) {
       System.err.println("Failed to load enemy config for: " + type.getConfigKey());
-      config = new EnemyConfig(); // Use defaults
+      config = new EnemyConfig();
     }
 
-    return createEnemy(config, waypoints);
+    Entity enemy = createEnemy(config, waypoints);
+
+    // ENEMY SPECIFIC COMPONENTS
+    switch (type) {
+      case HUNTER:
+        if (config.pounce != null) {
+          enemy.addComponent(
+              new PounceComponent(
+                  config.pounce.minCooldown,
+                  config.pounce.maxCooldown,
+                  config.pounce.duration,
+                  config.pounce.minSpeedMultiplier,
+                  config.pounce.maxSpeedMultiplier,
+                  config.pounce.preparationDuration));
+        } else {
+          enemy.addComponent(new PounceComponent(3f, 7f, 0.5f, 2.5f, 4f, 0.5f));
+        }
+        break;
+      case SCAVENGER:
+        // Scavenger has no special abilities
+        break;
+      default:
+        break;
+    }
+
+    return enemy;
   }
 
   /**
@@ -100,14 +126,13 @@ public class EnemyFactory {
         .getComponent(PhysicsMovementComponent.class)
         .setMaxSpeed(new Vector2(config.speed, config.speed));
 
-    // Listen for health changes to check if enemy should die
     enemy
         .getEvents()
         .addListener(
             "updateHealth",
-            (EventListener1<Integer>) (health) -> checkEnemyHealth(enemy, health, config.goldAmount));
-    
-    // Listen for waypoint completion
+            (EventListener1<Integer>)
+                (health) -> checkEnemyHealth(enemy, health, config.goldAmount));
+
     enemy
         .getEvents()
         .addListener("finishedChaseTask", () -> updateWaypointTarget(enemy, config.baseAttack));

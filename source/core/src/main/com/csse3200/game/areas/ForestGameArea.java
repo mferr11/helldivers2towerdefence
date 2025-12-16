@@ -362,7 +362,7 @@ public class ForestGameArea extends GameArea {
     GridPoint2 spawnPos = new GridPoint2(-5, 5);
     Entity scavenger = EnemyFactory.createEnemy(EnemyType.SCAVENGER, getWaypointEntityList());
     Entity hunter = EnemyFactory.createEnemy(EnemyType.HUNTER, getWaypointEntityList());
-    spawnEntityAt(scavenger, spawnPos, true, true);
+    spawnEntityAt(hunter, spawnPos, true, true);
   }
 
   // private void playMusic() {
