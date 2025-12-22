@@ -101,11 +101,15 @@ public class ForestGameArea extends GameArea {
     ServiceLocator.getGameAreaEvents()
         .addListener("enemyreachedbase", (EventListener1<Integer>) this::damagebase);
 
-    // Add this listener for nursing enemy spawns
     ServiceLocator.getGameAreaEvents()
         .addListener(
             "spawnNursingEnemies",
             (EventListener3<Integer, Vector2, Integer>) this::spawnNursingEnemies);
+
+    ServiceLocator.getGameAreaEvents()
+        .addListener(
+            "spawnAlphaEnemies",
+            (EventListener3<Integer, Vector2, Integer>) this::spawnAlphaEnemies);
 
     this.getEvents()
         .addListener("enemyKilled", (EventListener1<Integer>) (gold) -> checkEnemyKills(gold));
@@ -170,38 +174,63 @@ public class ForestGameArea extends GameArea {
   }
 
   /**
-   * Spawns multiple enemies at a specific location and waypoint index. Used when nursing enemies
-   * die and spawn scavengers.
+   * Spawns multiple enemies of a specific type at a location and waypoint index.
+   * Used by abilities like nursing enemies spawning scavengers on death, or alpha
+   * enemies spawning minions periodically.
    *
+   * @param enemyType Type of enemy to spawn
    * @param count Number of enemies to spawn
    * @param position Position to spawn enemies at
    * @param waypointIndex Waypoint index to start enemies from
    */
-  private void spawnNursingEnemies(int count, Vector2 position, int waypointIndex) {
+  private void spawnEnemiesAtPosition(EnemyType enemyType, int count, Vector2 position, int waypointIndex) {
     float radius = 0.8f; // Distance from center
 
     for (int i = 0; i < count; i++) {
-      // Arrange in a circle around the death position
+      // Arrange in a circle around the spawn position
       float angle = (float) (2 * Math.PI * i / count);
       float offsetX = (float) (Math.cos(angle) * radius);
       float offsetY = (float) (Math.sin(angle) * radius);
 
-      Entity scavenger =
-          EnemyFactory.createEnemy(EnemyType.SCAVENGER, getWaypointEntityList(), waypointIndex);
+      Entity enemy =
+          EnemyFactory.createEnemy(enemyType, getWaypointEntityList(), waypointIndex);
 
       // Use floating-point position directly instead of converting to GridPoint2
       Vector2 spawnPos = new Vector2(position.x + offsetX, position.y + offsetY);
-      spawnEntity(scavenger);
-      scavenger.setPosition(spawnPos);
+      spawnEntity(enemy);
+      enemy.setPosition(spawnPos);
     }
     additionalEnemiesSpawned += count;
+  }
+
+  /**
+   * Spawns scavengers when nursing enemies die.
+   *
+   * @param count Number of scavengers to spawn
+   * @param position Position to spawn scavengers at
+   * @param waypointIndex Waypoint index to start scavengers from
+   */
+  private void spawnNursingEnemies(int count, Vector2 position, int waypointIndex) {
+    spawnEnemiesAtPosition(EnemyType.SCAVENGER, count, position, waypointIndex);
+  }
+
+  /**
+   * Spawns scavengers when alpha enemies periodically spawn.
+   *
+   * @param count Number of scavengers to spawn
+   * @param position Position to spawn scavengers at
+   * @param waypointIndex Waypoint index to start scavengers from
+   */
+  private void spawnAlphaEnemies(int count, Vector2 position, int waypointIndex) {
+    System.out.println("Spawning " + count + " scavengers for Brood Commander at " + position);
+    spawnEnemiesAtPosition(EnemyType.SCAVENGER, count, position, waypointIndex);
   }
 
   private void initialiseWaves() {
     waves = new ArrayList<>();
 
     // Test Wave
-    waves.add(new Wave(0, false, 1f, List.of(EnemyType.NURSING), waypointEntityList));
+    waves.add(new Wave(0, false, 1f, List.of(EnemyType.BROODCOMMANDER), waypointEntityList));
 
     // Wave 1
     waves.add(

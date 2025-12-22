@@ -1,11 +1,11 @@
 {
   "enemies": {
     "hunter": {
-      "health": 100,
+      "health": 50,
       "baseAttack": 15,
       "speed": 2.5,
       "baseArmourRating": 0,
-      "goldAmount": 350,
+      "goldAmount": 250,
       "clickRadius": 0.0,
       "texturePath": "images/ghost_1.png",
       "pounce": {
@@ -18,11 +18,11 @@
       }
     },
     "scavenger": {
-      "health": 50,
+      "health": 35,
       "baseAttack": 10,
       "speed": 2.0,
       "baseArmourRating": 0,
-      "goldAmount": 250,
+      "goldAmount": 150,
       "clickRadius": 0.0,
       "texturePath": "images/ghost_1.png"
     },
@@ -42,9 +42,24 @@
         "pauseTime": 0.5
       }
     },
+    "broodcommander": {
+      "health": 125,
+      "baseAttack": 30,
+      "speed": 1.75,
+      "baseArmourRating": 1,
+      "goldAmount": 400,
+      "clickRadius": 0.0,
+      "texturePath": "images/ghost_1.png",
+      "alpha": {
+        "minAlphaTime": 7.0,
+        "maxAlphaTime": 12.0,
+        "minSpawnCount": 2,
+        "maxSpawnCount": 3
+      }
+    },
     "nursing": {
-      "health": 40,
-      "baseAttack": 40,
+      "health": 150,
+      "baseAttack": 50,
       "speed": 1.0,
       "baseArmourRating": 1,
       "goldAmount": 500,

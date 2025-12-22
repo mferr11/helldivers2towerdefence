@@ -34,6 +34,18 @@ public class EnemyConfig {
     public float pauseTime = 1f;
   }
 
+  // Alpha ability configuration
+  public AlphaConfig alpha;
+
+  // Configuration for the alpha ability //
+  public static class AlphaConfig {
+    public float minAlphaTime = 8f;
+    public float maxAlphaTime = 12f;
+    public int minSpawnCount = 2;
+    public int maxSpawnCount = 3;
+    public float pauseTime = 1f;
+  }
+
   // Nursing ability configuration
   public NursingConfig nursing;
 

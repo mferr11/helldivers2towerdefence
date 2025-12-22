@@ -33,7 +33,8 @@ public class EnemyFactory {
     SCAVENGER("scavenger"),
     HUNTER("hunter"),
     STALKER("stalker"),
-    NURSING("nursing");
+    NURSING("nursing"),
+    BROODCOMMANDER("broodcommander");
 
     private final String configKey;
 
@@ -101,6 +102,11 @@ public class EnemyFactory {
       case NURSING:
         if (config.nursing != null) {
           enemy.addComponent(new NursingComponent(config.nursing));
+        }
+        break;
+      case BROODCOMMANDER:
+        if (config.alpha != null) {
+          enemy.addComponent(new com.csse3200.game.components.enemy.abilities.AlphaComponent(config.alpha));
         }
         break;
       case SCAVENGER:
